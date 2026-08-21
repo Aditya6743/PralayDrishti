@@ -1,0 +1,12 @@
+node_modules/
+.next/
+backend/venv/
+backend/__pycache__/
+backend/.pytest_cache/
+.env
+backend/.env
+frontend/.env
+*.db
+backend/pralaydrishti.db
+backend.log
+.DS_Store
