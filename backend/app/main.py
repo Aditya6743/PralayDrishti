@@ -4,7 +4,8 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.connection import init_db
-from app.api.endpoints import router
+from app.api import endpoints
+from app.api import operational_endpoints
 
 # Initialize Database
 init_db()
@@ -19,4 +20,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router, prefix="/api")
+app.include_router(endpoints.router, prefix="/api")
+app.include_router(operational_endpoints.router, prefix="/api")

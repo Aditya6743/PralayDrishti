@@ -4,70 +4,72 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-mono: var(--font-mono), monospace;
 }
 
 :root {
-  --background: oklch(0.12 0.01 250); /* Dark navy/charcoal */
-  --foreground: oklch(0.98 0.0 0); /* White/off-white */
+  /* Deep Navy/Black Base */
+  --background: oklch(0.14 0.015 250); 
+  --foreground: oklch(0.96 0.01 250);
   
-  --card: oklch(0.16 0.01 250);
-  --card-foreground: oklch(0.98 0.0 0);
+  --card: oklch(0.17 0.015 250);
+  --card-foreground: oklch(0.96 0.01 250);
   
-  --popover: oklch(0.16 0.01 250);
-  --popover-foreground: oklch(0.98 0.0 0);
+  --popover: oklch(0.17 0.015 250);
+  --popover-foreground: oklch(0.96 0.01 250);
   
-  --primary: oklch(0.55 0.22 25); /* Emergency Red/Orange */
-  --primary-foreground: oklch(0.98 0.0 0);
+  --primary: oklch(0.65 0.2 25); /* Sharp emergency red/orange */
+  --primary-foreground: oklch(0.98 0 0);
   
-  --secondary: oklch(0.25 0.02 250); /* Darker blue/grey */
-  --secondary-foreground: oklch(0.98 0.0 0);
+  --secondary: oklch(0.22 0.02 250); /* Steel blue/grey */
+  --secondary-foreground: oklch(0.96 0.01 250);
   
-  --muted: oklch(0.20 0.01 250);
-  --muted-foreground: oklch(0.70 0.01 250);
+  --muted: oklch(0.2 0.02 250);
+  --muted-foreground: oklch(0.7 0.02 250);
   
-  --accent: oklch(0.25 0.02 250);
-  --accent-foreground: oklch(0.98 0.0 0);
+  --accent: oklch(0.25 0.03 250);
+  --accent-foreground: oklch(0.96 0.01 250);
   
-  --destructive: oklch(0.55 0.22 25); /* Deep red */
-  --destructive-foreground: oklch(0.98 0.0 0);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
   
   --border: oklch(0.25 0.02 250);
   --input: oklch(0.25 0.02 250);
-  --ring: oklch(0.55 0.22 25);
+  --ring: oklch(0.65 0.2 25);
   
-  --radius: 0.5rem;
+  --radius: 0.3rem; /* Sharper edges */
 }
 
-.dark {
-  --background: oklch(0.12 0.01 250); /* Dark navy/charcoal */
-  --foreground: oklch(0.98 0.0 0); /* White/off-white */
+/* Hardcode dark mode since this is a dark-only application */
+.dark, body {
+  --background: oklch(0.11 0.015 250);
+  --foreground: oklch(0.96 0.01 250);
   
-  --card: oklch(0.16 0.01 250);
-  --card-foreground: oklch(0.98 0.0 0);
+  --card: oklch(0.15 0.015 250);
+  --card-foreground: oklch(0.96 0.01 250);
   
-  --popover: oklch(0.16 0.01 250);
-  --popover-foreground: oklch(0.98 0.0 0);
+  --popover: oklch(0.15 0.015 250);
+  --popover-foreground: oklch(0.96 0.01 250);
   
-  --primary: oklch(0.55 0.22 25); /* Emergency Red/Orange */
-  --primary-foreground: oklch(0.98 0.0 0);
+  --primary: oklch(0.6 0.2 25);
+  --primary-foreground: oklch(0.98 0 0);
   
-  --secondary: oklch(0.25 0.02 250); /* Darker blue/grey */
-  --secondary-foreground: oklch(0.98 0.0 0);
+  --secondary: oklch(0.2 0.02 250);
+  --secondary-foreground: oklch(0.96 0.01 250);
   
-  --muted: oklch(0.20 0.01 250);
-  --muted-foreground: oklch(0.70 0.01 250);
+  --muted: oklch(0.18 0.02 250);
+  --muted-foreground: oklch(0.65 0.02 250);
   
-  --accent: oklch(0.25 0.02 250);
-  --accent-foreground: oklch(0.98 0.0 0);
+  --accent: oklch(0.23 0.03 250);
+  --accent-foreground: oklch(0.96 0.01 250);
   
-  --destructive: oklch(0.55 0.22 25); /* Deep red */
-  --destructive-foreground: oklch(0.98 0.0 0);
+  --destructive: oklch(0.5 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
   
-  --border: oklch(0.25 0.02 250);
-  --input: oklch(0.25 0.02 250);
-  --ring: oklch(0.55 0.22 25);
+  --border: oklch(0.22 0.02 250);
+  --input: oklch(0.22 0.02 250);
+  --ring: oklch(0.6 0.2 25);
 }
 
 @theme inline {
@@ -90,50 +92,116 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: calc(var(--radius) - 1px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 2px);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    cursor: none !important;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-primary-foreground;
+    font-family: var(--font-sans);
+    user-select: none;
+    -webkit-user-select: none;
+    
+    /* Background Pattern */
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.4) 0%, transparent 60%),
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 100vw 100vh, 40px 40px, 40px 40px;
+    background-position: center top, center center, center center;
+    background-attachment: fixed;
+  }
+  
+  /* Allow selection and typing in inputs */
+  input, textarea {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+  }
+  
+  /* Noise overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    opacity: 0.03;
+    z-index: -1;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }
 
 .glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
   background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
 }
 
-.emergency-red {
-  color: #ff3333;
+/* Custom Webkit Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-.emergency-orange {
-  color: #ff9900;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-.emergency-yellow {
-  color: #ffcc00;
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
-.emergency-green {
-  color: #00cc66;
-}
-.emergency-purple {
-  color: #9933ff;
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.bg-critical { background-color: rgba(255, 51, 51, 0.15); border: 1px solid rgba(255, 51, 51, 0.3); }
-.bg-high { background-color: rgba(255, 153, 0, 0.15); border: 1px solid rgba(255, 153, 0, 0.3); }
-.bg-medium { background-color: rgba(255, 204, 0, 0.15); border: 1px solid rgba(255, 204, 0, 0.3); }
-.bg-low { background-color: rgba(0, 204, 102, 0.15); border: 1px solid rgba(0, 204, 102, 0.3); }
-.bg-review { background-color: rgba(153, 51, 255, 0.15); border: 1px solid rgba(153, 51, 255, 0.3); }
+/* Custom classes for the magnetic cursor target */
+.magnetic-target {
+  display: inline-block;
+}
+
+/* Critical Pulse Animation */
+@keyframes criticalPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 51, 51, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0); }
+}
+
+.border-critical-pulse {
+  animation: criticalPulse 2s infinite;
+  border-color: rgba(255, 51, 51, 0.5) !important;
+}
+
+.bg-critical { background-color: rgba(255, 51, 51, 0.1); border: 1px solid rgba(255, 51, 51, 0.3); }
+.bg-high { background-color: rgba(255, 153, 0, 0.1); border: 1px solid rgba(255, 153, 0, 0.3); }
+.bg-medium { background-color: rgba(255, 204, 0, 0.1); border: 1px solid rgba(255, 204, 0, 0.3); }
+.bg-low { background-color: rgba(0, 204, 102, 0.1); border: 1px solid rgba(0, 204, 102, 0.3); }
+.bg-review { background-color: rgba(153, 51, 255, 0.1); border: 1px solid rgba(153, 51, 255, 0.3); }
+
+/* Typography Helpers */
+.editorial-heading {
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.mono-number {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+}

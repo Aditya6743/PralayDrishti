@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { Users, AlertTriangle, CheckCircle, XCircle, Target, Activity, ShieldAlert, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Report = {
@@ -24,7 +24,7 @@ export default function ReviewPage() {
 
   const fetchQueue = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/review");
+      const res = await fetch("/api/review");
       const data = await res.json();
       if (Array.isArray(data)) {
         setQueue(data);
@@ -36,7 +36,7 @@ export default function ReviewPage() {
 
   const handleReview = async (reportId: string, finalSeverity: string, action: string) => {
     try {
-      await fetch(`http://localhost:8000/api/review/${reportId}`, {
+      await fetch(`/api/review/${reportId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -53,89 +53,124 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="flex items-center gap-3 mb-8">
-        <Users className="h-8 w-8 text-purple-400" />
+    <div className="p-6 max-w-5xl mx-auto space-y-8">
+      <div className="flex items-center justify-between border-b border-white/5 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Human-in-the-Loop Review Queue</h1>
-          <p className="text-slate-400 text-sm">Low confidence reports or ambiguous language require manual verification.</p>
+          <h1 className="text-2xl font-bold text-white tracking-wide editorial-heading flex items-center gap-3">
+            <Users className="h-6 w-6 text-purple-400" /> DECISION LABORATORY
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1">Human-in-the-loop verification for uncertain intelligence signals.</p>
+        </div>
+        <div className="bg-purple-500/10 border border-purple-500/20 px-4 py-2 rounded-lg text-purple-400 text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+          <Activity className="w-4 h-4 animate-pulse" /> {queue.length} Pending
         </div>
       </div>
 
-      <div className="space-y-6">
-        <AnimatePresence>
+      <div className="space-y-8">
+        <AnimatePresence mode="popLayout">
           {queue.map((report) => (
             <motion.div
               key={report.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="bg-slate-900 border border-slate-700 p-6 rounded-xl shadow-lg relative overflow-hidden"
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="glass-panel border border-white/10 p-8 rounded-2xl shadow-2xl relative overflow-hidden group magnetic-target w-full"
             >
-              <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-purple-500 to-indigo-500"></div>
               
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center gap-2 text-purple-400 bg-purple-500/10 px-3 py-1 rounded text-sm font-semibold border border-purple-500/20">
-                  <AlertTriangle className="w-4 h-4" /> REVIEW REQUIRED (Confidence: {Math.round(report.confidence * 100)}%)
+              <div className="flex justify-between items-start mb-8">
+                <div className="flex items-center gap-3 text-purple-400 text-[10px] font-bold tracking-widest uppercase">
+                  <ShieldAlert className="w-4 h-4" /> HUMAN REVIEW RECOMMENDED
                 </div>
-                <span className="text-xs text-slate-500">{new Date(report.timestamp).toLocaleString()}</span>
+                <span className="text-xs text-muted-foreground mono-number">{new Date(report.timestamp).toLocaleString()}</span>
               </div>
 
-              <div className="mb-6 p-4 bg-slate-950 rounded-lg border border-slate-800">
-                <p className="text-sm text-slate-500 mb-1">Incoming Report:</p>
-                <p className="text-lg text-white font-medium italic">"{report.message}"</p>
-              </div>
+              <div className="grid md:grid-cols-2 gap-10 mb-8">
+                {/* Left Column: Report & Confidence */}
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase mb-3">Intercepted Signal</h3>
+                    <p className="text-2xl text-white font-medium leading-relaxed italic border-l-2 border-white/20 pl-4 py-1">"{report.message}"</p>
+                  </div>
 
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <p className="text-sm text-slate-400 mb-2">AI Prediction</p>
-                  <div className="p-3 rounded border border-slate-700 bg-slate-800/50">
-                    <p className="font-bold text-white mb-1">Severity: {report.severity}</p>
-                    <p className="text-sm text-slate-300">Category: {report.category}</p>
+                  {/* Confidence Spectrum */}
+                  <div className="bg-black/30 p-5 rounded-xl border border-white/5">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">AI Confidence Spectrum</h3>
+                      <span className="text-2xl font-bold mono-number text-white">{Math.round(report.confidence * 100)}%</span>
+                    </div>
+                    
+                    <div className="relative h-2 w-full bg-white/10 rounded-full overflow-hidden mb-2">
+                      {/* Gradient background mapping LOW (red) to HIGH (green) - but here it's uncertainty so LOW is bad */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 opacity-30"></div>
+                      <motion.div 
+                        initial={{ width: 0 }} 
+                        animate={{ width: `${report.confidence * 100}%` }} 
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className="absolute top-0 left-0 h-full bg-white shadow-[0_0_10px_white]"
+                      />
+                    </div>
+                    <div className="flex justify-between text-[10px] font-bold tracking-widest uppercase text-muted-foreground">
+                      <span>LOW</span>
+                      <span>HIGH</span>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <p className="text-sm text-slate-400 mb-2">AI Reasoning for Flag</p>
-                  <p className="text-sm text-slate-300 bg-slate-800/50 p-3 rounded border border-slate-700">
-                    {report.ai_reasoning}
-                  </p>
+
+                {/* Right Column: AI Interpretation */}
+                <div className="bg-black/40 p-6 rounded-xl border border-white/5 space-y-6">
+                  <div>
+                    <h3 className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase mb-2">AI Interpretation</h3>
+                    <div className="flex items-center gap-4">
+                      <span className={`px-3 py-1 rounded-sm text-xs font-bold tracking-widest uppercase border ${
+                        report.severity === 'CRITICAL' ? 'text-primary bg-primary/10 border-primary/30' : 
+                        report.severity === 'HIGH' ? 'text-orange-500 bg-orange-500/10 border-orange-500/30' : 
+                        'text-yellow-500 bg-yellow-500/10 border-yellow-500/30'
+                      }`}>
+                        {report.severity} SEVERITY
+                      </span>
+                      <span className="text-sm font-medium text-white">{report.category}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase mb-2">AI Reasoning</h3>
+                    <div className="text-sm text-slate-300 leading-relaxed">
+                      {report.ai_reasoning}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="border-t border-slate-800 pt-4 mt-2">
-                <p className="text-sm font-medium text-slate-300 mb-3">Operator Decision:</p>
-                <div className="flex flex-wrap gap-3">
+              {/* Action Bar */}
+              <div className="border-t border-white/10 pt-6 flex items-center justify-between">
+                <div className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">Operator Decision Required</div>
+                
+                <div className="flex items-center gap-3">
                   <Button 
-                    onClick={() => handleReview(report.id, report.severity, "CONFIRMED")}
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => handleReview(report.id, "FALSE_POSITIVE", "FALSE_POSITIVE")}
+                    variant="outline"
+                    className="border-white/10 text-muted-foreground hover:bg-white/5 hover:text-white h-12 px-6 rounded-lg text-xs tracking-wider uppercase font-bold magnetic-target"
                   >
-                    <CheckCircle className="w-4 h-4 mr-2" /> Confirm {report.severity}
+                    <XCircle className="w-4 h-4 mr-2" /> False Positive
                   </Button>
                   
                   {report.severity !== 'CRITICAL' && (
                     <Button 
                       onClick={() => handleReview(report.id, "CRITICAL", "ESCALATED")}
-                      className="bg-red-600 hover:bg-red-700 text-white"
+                      className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 h-12 px-6 rounded-lg text-xs tracking-wider uppercase font-bold magnetic-target"
                     >
-                      Escalate to CRITICAL
+                      <ArrowRight className="w-4 h-4 mr-2 -rotate-45" /> Escalate to Critical
                     </Button>
                   )}
                   
-                  {report.severity !== 'LOW' && (
-                    <Button 
-                      onClick={() => handleReview(report.id, "LOW", "DOWNGRADED")}
-                      className="bg-slate-700 hover:bg-slate-600 text-white"
-                    >
-                      Downgrade to LOW
-                    </Button>
-                  )}
-
                   <Button 
-                    onClick={() => handleReview(report.id, "FALSE_POSITIVE", "FALSE_POSITIVE")}
-                    variant="outline"
-                    className="border-red-500/50 text-red-400 hover:bg-red-500/10 ml-auto"
+                    onClick={() => handleReview(report.id, report.severity, "CONFIRMED")}
+                    className="bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.2)] h-12 px-8 rounded-lg text-xs tracking-wider uppercase font-bold magnetic-target"
                   >
-                    <XCircle className="w-4 h-4 mr-2" /> Mark False Positive
+                    <CheckCircle className="w-4 h-4 mr-2" /> Confirm {report.severity}
                   </Button>
                 </div>
               </div>
@@ -144,11 +179,15 @@ export default function ReviewPage() {
         </AnimatePresence>
         
         {queue.length === 0 && (
-          <div className="text-center text-slate-500 py-20 border-2 border-dashed border-slate-800 rounded-xl">
-            <CheckCircle className="w-12 h-12 text-green-500/50 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-slate-300">Queue Empty</h3>
-            <p className="text-sm">No reports currently require human review.</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="text-center py-32 border border-white/5 bg-black/20 rounded-2xl relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/5 via-transparent to-transparent"></div>
+            <CheckCircle className="w-16 h-16 text-emerald-500/50 mx-auto mb-6 relative z-10" />
+            <h3 className="text-2xl font-bold text-white mb-2 editorial-heading relative z-10">Queue Empty</h3>
+            <p className="text-muted-foreground tracking-wide relative z-10">All uncertain signals have been resolved.</p>
+          </motion.div>
         )}
       </div>
     </div>

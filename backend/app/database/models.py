@@ -21,6 +21,7 @@ class Incident(Base):
     people_affected = Column(Integer, default=0)
     status = Column(String, default="NEW") # NEW, ACKNOWLEDGED, RESPONDING, RESOLVED
     is_demo = Column(Boolean, default=False)
+    ttc_minutes = Column(Integer, default=60) # Time-to-Criticality
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -31,6 +32,7 @@ class Report(Base):
     __tablename__ = "reports"
     
     id = Column(String, primary_key=True, default=generate_uuid)
+    ticket_id = Column(String, default=lambda: "PD-" + str(uuid.uuid4())[:8].upper())
     message = Column(Text, nullable=False)
     source = Column(String, default="Web")
     timestamp = Column(DateTime, default=datetime.utcnow)
@@ -42,6 +44,7 @@ class Report(Base):
     confidence = Column(Float)
     people_affected = Column(Integer, default=0)
     ai_reasoning = Column(Text)
+    survival_guidance = Column(Text)
     urgency_indicators = Column(String) # JSON list as string
     detected_language = Column(String, default="English")
     anomaly_flag = Column(Boolean, default=False)
@@ -54,6 +57,33 @@ class Report(Base):
     incident_id = Column(String, ForeignKey("incidents.id"), nullable=True)
     incident = relationship("Incident", back_populates="reports")
     reviews = relationship("HumanReview", back_populates="report", cascade="all, delete-orphan")
+
+class Shelter(Base):
+    __tablename__ = "shelters"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    name = Column(String, nullable=False)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    capacity = Column(Integer, default=100)
+    current_occupancy = Column(Integer, default=0)
+    medical_supplies = Column(Boolean, default=True)
+
+class MissingPerson(Base):
+    __tablename__ = "missing_persons"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    name = Column(String)
+    description = Column(Text)
+    contact_phone = Column(String)
+    status = Column(String, default="MISSING")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class FoundPerson(Base):
+    __tablename__ = "found_persons"
+    id = Column(String, primary_key=True, default=generate_uuid)
+    description = Column(Text)
+    location = Column(String)
+    matched_missing_id = Column(String, ForeignKey("missing_persons.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class TimelineEvent(Base):
     __tablename__ = "timeline_events"

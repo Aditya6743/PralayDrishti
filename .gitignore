@@ -10,3 +10,5 @@ frontend/.env
 backend/pralaydrishti.db
 backend.log
 .DS_Store
+**/__pycache__/
+*.pyc

@@ -95,9 +95,23 @@ async def process_report_async(report_id: str, db: Session):
     else:
         incident.people_affected += ai_res.people_affected
         incident.updated_at = datetime.utcnow()
+        
+        # TTC Dynamic Triage logic (Feature 1)
+        ttc_multiplier = {"CRITICAL": 15, "HIGH": 60, "MEDIUM": 120, "LOW": 360}
+        new_ttc = ttc_multiplier.get(ai_res.severity, 60)
+        if new_ttc < incident.ttc_minutes:
+            incident.ttc_minutes = new_ttc
+            
         if ai_res.severity in ["CRITICAL", "HIGH"]: 
             incident.severity = ai_res.severity # simplify escalation logic for non-demo
         db.commit()
+    
+    # Feature 5: Survival Guidance
+    guidance = "Stay calm and await rescue."
+    if ai_res.severity == "CRITICAL" and "water" in ai_res.reasoning.lower():
+        guidance = "1. Move to the highest possible ground immediately.\n2. Do not walk through moving water.\n3. Turn off main power if safe."
+    elif ai_res.severity == "CRITICAL":
+        guidance = "1. Find a safe structural area.\n2. Do not move if injured.\n3. Conserve phone battery."
     
     db_report.category = ai_res.category
     db_report.severity = ai_res.severity
@@ -105,6 +119,7 @@ async def process_report_async(report_id: str, db: Session):
     if ai_res.people_affected > db_report.people_affected:
         db_report.people_affected = ai_res.people_affected
     db_report.ai_reasoning = ai_res.reasoning
+    db_report.survival_guidance = guidance
     db_report.requires_human_review = ai_res.requires_human_review
     db_report.detected_language = ai_res.detected_language
     db_report.anomaly_flag = ai_res.anomaly_flag
@@ -116,6 +131,7 @@ async def process_report_async(report_id: str, db: Session):
     
     report_dict = {
         "id": db_report.id,
+        "ticket_id": db_report.ticket_id,
         "message": db_report.message,
         "source": db_report.source,
         "timestamp": db_report.timestamp.isoformat(),
@@ -124,6 +140,7 @@ async def process_report_async(report_id: str, db: Session):
         "category": db_report.category,
         "requires_human_review": db_report.requires_human_review,
         "ai_reasoning": db_report.ai_reasoning,
+        "survival_guidance": db_report.survival_guidance,
         "detected_language": db_report.detected_language,
         "anomaly_flag": db_report.anomaly_flag,
         "incident_id": db_report.incident_id,

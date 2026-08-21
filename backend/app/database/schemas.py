@@ -27,6 +27,7 @@ class AIAnalysisResult(BaseModel):
 
 class ReportResponse(BaseModel):
     id: str
+    ticket_id: Optional[str] = None
     message: str
     source: str
     timestamp: datetime
@@ -35,6 +36,7 @@ class ReportResponse(BaseModel):
     category: Optional[str] = None
     requires_human_review: Optional[bool] = False
     ai_reasoning: Optional[str] = None
+    survival_guidance: Optional[str] = None
     urgency_indicators: Optional[str] = None
     detected_language: Optional[str] = "English"
     anomaly_flag: Optional[bool] = False
@@ -63,6 +65,7 @@ class IncidentResponse(BaseModel):
     longitude: Optional[float]
     people_affected: int
     status: str
+    ttc_minutes: int
     report_count: int = 0
     created_at: datetime
     updated_at: datetime
@@ -86,3 +89,24 @@ class ReviewAction(BaseModel):
     final_prediction: str
     reviewer_action: str
     reviewer_notes: Optional[str] = None
+
+class ShelterResponse(BaseModel):
+    id: str
+    name: str
+    latitude: float
+    longitude: float
+    capacity: int
+    current_occupancy: int
+    medical_supplies: bool
+
+    class Config:
+        from_attributes = True
+
+class MissingPersonCreate(BaseModel):
+    name: str
+    description: str
+    contact_phone: str
+
+class FoundPersonCreate(BaseModel):
+    description: str
+    location: str
