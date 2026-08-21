@@ -175,7 +175,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </AnimatePresence>
           </div>
           
-          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-secondary to-primary/50 border border-white/20 shadow-inner magnetic-target cursor-pointer hidden sm:block"></div>
+          
+          
+
         </div>
       </motion.header>
 

@@ -205,3 +205,7 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.05em;
 }
+@keyframes scan {
+  0% { transform: translateY(-30px); }
+  100% { transform: translateY(30px); }
+}

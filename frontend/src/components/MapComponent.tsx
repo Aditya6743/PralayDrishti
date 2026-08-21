@@ -1,8 +1,76 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap, LayersControl } from "react-leaflet";
 import L from "leaflet";
+import "leaflet.heat";
+
+const HeatmapLayer = ({ incidents }: { incidents: Incident[] }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (!map || incidents.length === 0) return;
+    
+    const points = incidents
+      .filter(i => i.latitude && i.longitude && !isNaN(Number(i.latitude)) && !isNaN(Number(i.longitude)))
+      .map(i => {
+        let intensity = 0.2;
+        if (i.severity === 'CRITICAL') intensity = 1.0;
+        else if (i.severity === 'HIGH') intensity = 0.7;
+        else if (i.severity === 'MEDIUM') intensity = 0.4;
+        return [Number(i.latitude), Number(i.longitude), intensity];
+      });
+      
+    // @ts-ignore
+    const heat = L.heatLayer(points, {
+      radius: 80,
+      blur: 60,
+      maxZoom: 18,
+      max: 1.0,
+      gradient: {
+        0.2: '#059669', // Emerald
+        0.5: '#d97706', // Amber
+        0.8: '#ea580c', // Orange
+        1.0: '#dc2626'  // Red
+      }
+    }).addTo(map);
+    
+    return () => {
+      map.removeLayer(heat);
+    };
+  }, [incidents, map]);
+  
+  return null;
+};
+
+
+
+
+// Auto-resizer to prevent half-grey maps
+const MapResizer = () => {
+  const map = useMap();
+  useEffect(() => {
+    // Initial flush
+    setTimeout(() => { map.invalidateSize(); }, 250);
+    setTimeout(() => { map.invalidateSize(); }, 1000);
+
+    // Watch for parent flex resizes
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    
+    const container = map.getContainer();
+    if (container) {
+      resizeObserver.observe(container);
+    }
+    
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [map]);
+  return null;
+};
+
 
 // Create custom glowing DivIcons
 const createGlowingIcon = (severity: string, isSelected: boolean) => {
@@ -38,7 +106,7 @@ const createGlowingIcon = (severity: string, isSelected: boolean) => {
 };
 
 type Incident = {
-  id: string; title: string; severity: string; latitude: number; longitude: number;
+  id: string; ticket_id?: string; title: string; severity: string; latitude: number; longitude: number;
   people_affected: number; report_count: number; status: string;
 };
 
@@ -52,13 +120,17 @@ const MapController = ({
 }) => {
   const map = useMap();
   const prevSelectedId = useRef<string | null>(null);
+  const hasInitializedBounds = useRef(false);
 
   useEffect(() => {
     // Initial bounds if there are incidents
-    if (incidents.length > 0 && !selectedIncidentId && prevSelectedId.current === null) {
-      const bounds = L.latLngBounds(incidents.map(i => [i.latitude, i.longitude]));
+    if (incidents.length > 0 && !selectedIncidentId && !hasInitializedBounds.current) {
+      const validIncidents = incidents.filter(i => i.latitude && i.longitude && !isNaN(Number(i.latitude)) && !isNaN(Number(i.longitude)));
+      if (validIncidents.length === 0) return;
+      const bounds = L.latLngBounds(validIncidents.map(i => [Number(i.latitude), Number(i.longitude)]));
       if (bounds.isValid()) {
         map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12, animate: true, duration: 1.5 });
+        hasInitializedBounds.current = true;
       }
     }
   }, [incidents, map, selectedIncidentId]);
@@ -75,7 +147,9 @@ const MapController = ({
       }
     } else if (!selectedIncidentId && prevSelectedId.current) {
       // Return to bounds
-      const bounds = L.latLngBounds(incidents.map(i => [i.latitude, i.longitude]));
+      const validIncidents = incidents.filter(i => i.latitude && i.longitude && !isNaN(Number(i.latitude)) && !isNaN(Number(i.longitude)));
+      if (validIncidents.length === 0) return;
+      const bounds = L.latLngBounds(validIncidents.map(i => [Number(i.latitude), Number(i.longitude)]));
       if (bounds.isValid()) {
         map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 12, duration: 1.5 });
       }
@@ -99,30 +173,59 @@ export default function MapComponent({
     <MapContainer 
       center={[19.0760, 72.8777]} 
       zoom={11} 
-      className="w-full h-full bg-background"
+      className="absolute inset-0 w-full h-full bg-background"
       zoomControl={false}
     >
-      <TileLayer
-        attribution=''
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        className="opacity-90 filter brightness-75 contrast-125 grayscale hue-rotate-180 invert-0"
-      />
+            <LayersControl position="bottomleft">
+        <LayersControl.BaseLayer name="Cinematic Satellite (Night)">
+          <TileLayer
+            attribution=''
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            className="filter brightness-[0.35] contrast-[1.2] saturate-[0.2] sepia-[0.3] hue-rotate-[180deg]"
+          />
+        </LayersControl.BaseLayer>
+        
+        <LayersControl.BaseLayer name="Raw Satellite (Day)">
+          <TileLayer
+            attribution=''
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            className="filter brightness-[0.8] contrast-[1.2] saturate-[1.2]"
+          />
+        </LayersControl.BaseLayer>
+
+                <LayersControl.BaseLayer name="Real Map (Standard)">
+          <TileLayer
+            attribution=''
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          />
+        </LayersControl.BaseLayer>
+        
+        <LayersControl.BaseLayer checked name="Tactical Street (Dark)">
+          <TileLayer
+            attribution=''
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          />
+        </LayersControl.BaseLayer>
+      </LayersControl>
+      
+      <MapResizer />
+      <HeatmapLayer incidents={incidents} />
       
       <MapController incidents={incidents} selectedIncidentId={selectedIncidentId} />
       
       {incidents.map((incident) => {
-        if (!incident.latitude || !incident.longitude) return null;
+        if (!incident.latitude || !incident.longitude || isNaN(Number(incident.latitude)) || isNaN(Number(incident.longitude))) return null;
         
-        const isSelected = incident.id === selectedIncidentId;
+        const isSelected = (incident.id === selectedIncidentId || incident.ticket_id === selectedIncidentId);
         const opacity = selectedIncidentId && !isSelected ? 0.3 : 1;
 
         return (
           <Marker 
-            key={incident.id} 
+            key={incident.ticket_id || incident.id} 
             position={[incident.latitude, incident.longitude]}
             icon={createGlowingIcon(incident.severity, isSelected)}
             eventHandlers={{
-              click: () => onMarkerClick(incident.id)
+              click: () => onMarkerClick(incident.ticket_id || incident.id)
             }}
             // @ts-ignore
             opacity={opacity}

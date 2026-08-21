@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Report</title>
+    <style>
+        :root {
+            --bg: #020617;
+            --surface: #0f172a;
+            --primary: #ef4444;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        h1 { margin-top: 0; font-size: 1.5rem; }
+        .lang-toggle {
+            float: right;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: opacity 0.2s;
+        }
+        button:active { opacity: 0.8; }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        .form-group { margin-top: 1.25rem; }
+        label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.875rem; }
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        #statusMsg {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            text-align: center;
+            min-height: 1.25rem;
+        }
+    </style>
+
+        .voice-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .voice-btn.recording {
+            background: var(--primary);
+            color: white;
+            border-style: solid;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .offline-badge {
+            display: none;
+            background: #f59e0b;
+            color: black;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+    </head>
+
+<body>
+    <div class="container">
+        <button class="lang-toggle" onclick="toggleLang()">EN / HI</button>
+        <h1 data-en="Emergency Report" data-hi="आपातकालीन रिपोर्ट">Emergency Report</h1>
+        
+        
+        <div id="offlineBadge" class="offline-badge">NO SIGNAL: OFFLINE MESH-QUEUING ACTIVE</div>
+        
+        <button type="button" class="voice-btn" id="voiceBtn" onclick="toggleVoiceSOS()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            <span id="voiceText" data-en="Tap to Speak (AI Audio Extract)" data-hi="बोलने के लिए टैप करें">Tap to Speak (AI Audio Extract)</span>
+        </button>
+        <div id="transcriptOut" style="color: var(--text-muted); font-size: 0.75rem; text-align: center; margin-top: -1rem; margin-bottom: 1rem; min-height: 1rem;"></div>
+
+        <div class="form-group">
+
+            <button type="button" class="btn-secondary" onclick="getGPS()" id="gpsBtn" data-en="Capture GPS Location" data-hi="जीपीएस स्थान प्राप्त करें">Capture GPS Location</button>
+            <div id="gpsResult" style="margin-top: 8px; font-size: 0.875rem; color: var(--text-muted); text-align: center;"></div>
+        </div>
+
+        <div class="form-group">
+            <label data-en="Select Hazard:" data-hi="खतरे चुनें:">Select Hazard:</label>
+            <select id="hazardType" style="width:100%; padding: 8px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); border-radius: 8px;">
+                <option value="FLOOD">Flood</option>
+                <option value="FIRE">Fire</option>
+                <option value="MEDICAL">Medical Emergency</option>
+                <option value="COLLAPSE">Structural Collapse</option>
+                <option value="CYCLONE">Cyclone</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label data-en="Condition Check:" data-hi="स्थिति जांच:">Condition Check:</label>
+            <div class="checkbox-grid">
+                <label class="checkbox-label"><input type="checkbox" id="cbTrapped"> <span data-en="Trapped" data-hi="फंसा हुआ">Trapped</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="cbWater"> <span data-en="Water Rising" data-hi="पानी बढ़ रहा है">Water Rising</span></label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Phone Number (Optional)</label>
+            <input type="tel" id="phone" style="width:100%; padding: 8px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); border-radius: 8px; box-sizing:border-box;">
+        </div>
+
+        <button onclick="submitReport()" data-en="Submit SOS" data-hi="एसओएस भेजें">Submit SOS</button>
+        <div id="statusMsg"></div>
+    </div>
+
+    <script>
+        let lang = 'en';
+        let coords = null;
+
+        function toggleLang() {
+            lang = lang === 'en' ? 'hi' : 'en';
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${lang}`);
+            });
+        }
+
+        function getGPS() {
+            const btn = document.getElementById('gpsBtn');
+            const res = document.getElementById('gpsResult');
+            btn.textContent = lang === 'en' ? 'Getting location...' : 'स्थान प्राप्त कर रहा है...';
+            
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                        res.textContent = `${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`;
+                        btn.textContent = lang === 'en' ? 'Location Captured' : 'स्थान प्राप्त हुआ';
+                    },
+                    err => {
+                        res.textContent = lang === 'en' ? 'Error getting location' : 'स्थान प्राप्त करने में त्रुटि';
+                        btn.textContent = lang === 'en' ? 'Capture GPS Location' : 'जीपीएस स्थान प्राप्त करें';
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                res.textContent = lang === 'en' ? 'GPS not supported' : 'जीपीएस समर्थित नहीं है';
+            }
+        }
+
+        async function submitReport() {
+            const msg = document.getElementById('statusMsg');
+            if (!coords) {
+                msg.style.color = 'var(--primary)';
+                msg.textContent = lang === 'en' ? 'Please capture GPS location first.' : 'कृपया पहले जीपीएस स्थान प्राप्त करें।';
+                return;
+            }
+
+            msg.style.color = 'var(--text-muted)';
+            msg.textContent = lang === 'en' ? 'Transmitting SOS...' : 'भेज रहा है...';
+            
+            const payload = {
+                hazard: document.getElementById('hazardType').value,
+                lat: coords.lat,
+                lng: coords.lng,
+                phone: document.getElementById('phone').value,
+                victim_status: {
+                    headcount: 1,
+                    trapped: document.getElementById('cbTrapped').checked,
+                    water_rising: document.getElementById('cbWater').checked
+                }
+            };
+            
+            try {
+                const response = await fetch('/api/report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.href = data.status_url;
+                    }
+                } else {
+                    throw new Error('Server error');
+                }
+            } catch (err) {
+                msg.style.color = 'var(--primary)';
+                msg.textContent = lang === 'en' ? 'Failed to submit report.' : 'रिपोर्ट भेजने में विफल।';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle, Activity, X, Target, Filter } from "lucide-react";
+import { AlertTriangle, Activity, X, Target, Filter, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const MapWithNoSSR = dynamic(() => import("@/components/MapComponent"), {

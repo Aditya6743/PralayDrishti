@@ -5,20 +5,35 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Play, ShieldAlert, Users, AlertTriangle, MapPin, Activity } from "lucide-react";
 import Radar from "@/components/ui/Radar";
+import HeroRadar from "@/components/ui/HeroRadar";
 import Magnetic from "@/components/ui/Magnetic";
 
 export default function InteractiveRadarHero() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePos({
+      x: (e.clientX / window.innerWidth) - 0.5,
+      y: (e.clientY / window.innerHeight) - 0.5
+    });
+  };
 
   return (
-    <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-transparent">
+    <div onMouseMove={handleMouseMove} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-transparent">
       
       {/* --- Ambient Background --- */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {/* Subtle topographic / radial glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.05)_0%,transparent_60%)]" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.03)_0%,transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 [mask-image:radial-gradient(ellipse_100%_100%_at_50%_50%,#000_20%,transparent_100%)]" />
+        
+        {/* Interactive Mesh */}
+        <motion.div 
+          animate={{ x: mousePos.x * -60, y: mousePos.y * -60 }}
+          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          className="absolute -inset-10 bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-40 [mask-image:radial-gradient(ellipse_100%_100%_at_50%_50%,#000_10%,transparent_100%)]" 
+        />
         <div className="absolute inset-0 bg-noise opacity-[0.02] mix-blend-overlay" />
       </div>
 
@@ -88,40 +103,17 @@ export default function InteractiveRadarHero() {
           className="relative w-full h-[500px] md:h-[600px] flex items-center justify-center lg:justify-end"
         >
           
-          {/* Central AI Node with Interactive WebGL Radar Behind It */}
-          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center">
-            
-            {/* The Interactive Radar Element */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] mix-blend-screen pointer-events-auto [mask-image:radial-gradient(circle_at_center,white_30%,transparent_60%)] -z-10">
-              <Radar
-                speed={1.0}
-                scale={0.7}
-                ringCount={8}
-                spokeCount={12}
-                color="#ff3333" 
-                backgroundColor="transparent"
-                falloff={2.0}
-                brightness={2.5}
-                enableMouseInteraction={true}
-                mouseInfluence={1.0}
-              />
-            </div>
+          
 
-            <div className="relative flex items-center justify-center w-28 h-28 z-10">
-              {/* Spinning rings */}
-              <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="absolute inset-0 rounded-full border border-white/10 border-dashed" />
-              <motion.div animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute inset-2 rounded-full border border-white/5" />
-              <div className="absolute inset-4 rounded-full bg-gradient-to-b from-slate-900 to-black border border-white/10 flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.3)]">
-                <ShieldAlert className="w-8 h-8 text-white opacity-80" />
-              </div>
-            </div>
-            <div className="mt-4 text-center z-10 bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full border border-white/5">
-              <div className="text-[10px] font-bold tracking-[0.2em] text-white uppercase">
-                Pralay<span className="text-red-500">Drishti</span>
-              </div>
-              <div className="text-[9px] font-semibold tracking-[0.1em] text-slate-500 uppercase mt-1">AI Engine</div>
-            </div>
+          
+          
+          {/* Central AI Node with Premium HTML/CSS Radar */}
+          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center pointer-events-none w-[800px] h-[800px]">
+            <HeroRadar />
           </div>
+
+
+
 
           {/* SVG Connection Lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden sm:block">
@@ -150,16 +142,16 @@ export default function InteractiveRadarHero() {
             {Array.from({length: 30}).map((_, i) => (
               <motion.div
                 key={`particle-${i}`}
-                initial={{ x: -50, y: Math.random() * 600, opacity: 0 }}
+                initial={{ x: -50, y: Math.round((Math.sin(i * 100) * 0.5 + 0.5) * 600), opacity: 0 }}
                 animate={{ 
                   x: 300,
                   y: 300,
                   opacity: [0, 1, 0],
                 }}
                 transition={{
-                  duration: 2 + Math.random() * 2,
+                  duration: Number((2 + (Math.cos(i * 200) * 0.5 + 0.5) * 2).toFixed(2)),
                   repeat: Infinity,
-                  delay: Math.random() * 3,
+                  delay: Number(((Math.sin(i * 300) * 0.5 + 0.5) * 3).toFixed(2)),
                   ease: "circIn"
                 }}
                 className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,1)]"
@@ -167,83 +159,7 @@ export default function InteractiveRadarHero() {
             ))}
           </div>
 
-          {/* Right Side Glass Cards (The Structured Output) */}
-          <div className="absolute right-0 top-0 bottom-0 w-[280px] md:w-[320px] flex flex-col justify-center gap-6 z-30">
-            
-            {/* Critical Card */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8 }}
-              className="glass-panel p-4 rounded-xl border border-red-500/30 bg-red-500/5 backdrop-blur-xl relative overflow-hidden group"
-            >
-              <div className="absolute top-0 left-0 w-1 h-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,1)]" />
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-[9px] font-bold tracking-widest text-red-500 uppercase">Critical • 96%</span>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                  <AlertTriangle className="w-4 h-4 text-red-500" />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white uppercase tracking-wider mb-0.5">5 People Trapped</div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1"><MapPin className="w-3 h-3" /> Sector 12, New Delhi</div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* High Card */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.0 }}
-              className="glass-panel p-4 rounded-xl border border-orange-500/20 bg-black/60 backdrop-blur-xl relative overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 w-1 h-full bg-orange-500" />
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] font-bold tracking-widest text-orange-500 uppercase">High • 89%</span>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                  <ShieldAlert className="w-4 h-4 text-orange-400" />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white uppercase tracking-wider mb-0.5">Flooding Reported</div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1"><MapPin className="w-3 h-3" /> Sector 14, New Delhi</div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Medium Card */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.2 }}
-              className="glass-panel p-4 rounded-xl border border-white/10 bg-black/60 backdrop-blur-xl relative overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500" />
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] font-bold tracking-widest text-yellow-500 uppercase">Medium • 74%</span>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                  <Users className="w-4 h-4 text-slate-300" />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white uppercase tracking-wider mb-0.5">Road Blocked</div>
-                  <div className="text-[10px] text-slate-400 flex items-center gap-1"><MapPin className="w-3 h-3" /> Sector 8, New Delhi</div>
-                </div>
-              </div>
-            </motion.div>
-
-          </div>
+          
 
           {/* Stats Bar (Bottom center) */}
           <motion.div 
@@ -270,6 +186,40 @@ export default function InteractiveRadarHero() {
 
         </motion.div>
 
+      </div>
+
+      {/* Right Navbar Expanding Incident Cards */}
+      <div className="fixed right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-[999] group/nav py-12 pl-12">
+        {[
+          { severity: 'Critical', confidence: 96, title: '5 People Trapped', loc: 'Sector 12, New Delhi', Icon: AlertTriangle, color: '#ef4444', border: 'rgba(239,68,68,0.3)', bg: 'rgba(239,68,68,0.05)', delay: 0.8 },
+          { severity: 'High', confidence: 89, title: 'Flooding Reported', loc: 'Sector 14, New Delhi', Icon: ShieldAlert, color: '#f97316', border: 'rgba(249,115,22,0.3)', bg: 'rgba(0,0,0,0.6)', delay: 1.0 },
+          { severity: 'Medium', confidence: 74, title: 'Road Blocked', loc: 'Sector 8, New Delhi', Icon: Users, color: '#eab308', border: 'rgba(255,255,255,0.1)', bg: 'rgba(0,0,0,0.6)', delay: 1.2 }
+        ].map((card, i) => (
+          <motion.div 
+            key={i}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            
+            transition={{ delay: card.delay, type: 'spring', stiffness: 200, damping: 25 }}
+            className="w-[64px] group-hover/nav:w-[320px] transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] p-3 rounded-l-2xl rounded-r-none border-y border-l backdrop-blur-2xl relative overflow-hidden group cursor-pointer flex items-center h-[90px] shadow-2xl"
+            style={{ borderColor: card.border, backgroundColor: card.bg }}
+          >
+            <div className="absolute top-0 left-0 w-1 h-full shadow-[0_0_15px_currentColor]" style={{ backgroundColor: card.color, color: card.color }} />
+            
+            <div className="flex-shrink-0 w-12 flex items-center justify-center pl-1">
+              <card.Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" style={{ color: card.color }} />
+            </div>
+
+            <div className="flex flex-col min-w-[240px] pl-2 opacity-0 group-hover/nav:opacity-100 transition-opacity duration-300 delay-100">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: card.color }} />
+                <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: card.color }}>{card.severity} • {card.confidence}%</span>
+              </div>
+              <div className="text-sm font-black text-white uppercase tracking-wider mb-1">{card.title}</div>
+              <div className="text-[10px] text-slate-400 font-bold flex items-center gap-1"><MapPin className="w-3 h-3" /> {card.loc}</div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

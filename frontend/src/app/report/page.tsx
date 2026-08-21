@@ -1,259 +1,186 @@
+
 "use client";
 
-import { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { ShieldAlert, CheckCircle, AlertTriangle, MapPin, Loader2, Mic, Camera, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import Radar from "@/components/ui/Radar";
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { AlertTriangle, MapPin, Users, Activity, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-export default function CitizenReport() {
-  const [formData, setFormData] = useState({ text: "", location: "", people: "", name: "", image_data: "" });
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [reportId, setReportId] = useState("");
-  const [isListening, setIsListening] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const startVoiceDictation = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      alert("Your browser does not support voice dictation.");
-      return;
+export default function ReportPortal() {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    hazard: '',
+    lat: 0,
+    lng: 0,
+    phone: '',
+    victim_status: {
+      headcount: 1,
+      trapped: false,
+      water_rising: false,
+      water_depth: 'ankle',
+      unconscious: false,
+      smoke: false,
+      infant_present: false,
+      senior_present: false
     }
-    const SpeechRecognition = window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "hi-IN";
+  });
 
-    recognition.onstart = () => setIsListening(true);
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setFormData(prev => ({ ...prev, text: prev.text ? prev.text + " " + transcript : transcript }));
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-    
-    recognition.start();
+  const [locationStatus, setLocationStatus] = useState('Idle');
+  const [submitting, setSubmitting] = useState(false);
+  const [ticket, setTicket] = useState<any>(null);
+
+  const getGPS = () => {
+    setLocationStatus('Locating...');
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setFormData({ ...formData, lat: pos.coords.latitude, lng: pos.coords.longitude });
+          setLocationStatus(`Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`);
+        },
+        (err) => setLocationStatus('Failed. Enter manually.')
+      );
+    }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setFormData(prev => ({ ...prev, image_data: event.target!.result as string }));
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    
+  const submitReport = async () => {
+    setSubmitting(true);
     try {
-      const res = await fetch("/api/reports", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: formData.text,
-          location_text: formData.location,
-          people_affected: parseInt(formData.people) || 0,
-          image_data: formData.image_data || null,
-          source: "Web",
-        }),
+      const res = await fetch('/api/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
       });
-      
-      if (!res.ok) throw new Error("Failed");
       const data = await res.json();
-      setReportId(data.ticket_id);
-      setStatus("success");
-    } catch (err) {
-      setStatus("error");
-    } finally {
-      setLoading(false);
-    }
+      if (data.success) {
+        setTicket(data);
+        setStep(4);
+      }
+    } catch (e) {}
+    setSubmitting(false);
   };
-
-  if (status === "success") {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
-        {/* WebGL Radar Background */}
-        <div className="absolute inset-0 z-0 opacity-50 mix-blend-screen pointer-events-none">
-          <Radar
-            speed={1.2}
-            scale={0.4}
-            ringCount={8}
-            spokeCount={12}
-            color="#ef4444" // Tailwind primary red
-            backgroundColor="#000000"
-            falloff={1.5}
-            brightness={1.5}
-            enableMouseInteraction={true}
-            mouseInfluence={0.2}
-          />
-        </div>
-
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel p-10 rounded-[2rem] max-w-sm w-full text-center relative z-10 overflow-hidden border border-primary/30 shadow-[0_0_50px_rgba(239,68,68,0.2)]">
-          <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 relative">
-            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
-            <CheckCircle className="h-10 w-10 text-primary relative z-10" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2 editorial-heading">SOS Received</h2>
-          <p className="text-muted-foreground text-sm mb-8 font-medium">Your distress signal has been verified by AI and transmitted to the command center.</p>
-          
-          <div className="bg-black/80 rounded-xl p-6 mb-8 border border-white/10 shadow-inner">
-            <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-2">Live Ticket ID</p>
-            <p className="text-3xl font-black text-white tracking-widest mono-number">{reportId}</p>
-          </div>
-          
-          <div className="flex flex-col gap-3">
-            <Link href={`/status/${reportId}`} className="w-full h-14 flex items-center justify-center rounded-xl bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-widest text-xs transition-all magnetic-target">
-              Track Live Status
-            </Link>
-            <Button onClick={() => { setStatus("idle"); setFormData({ text: "", location: "", people: "", name: "", image_data: "" }); }} variant="outline" className="w-full h-14 rounded-xl border-white/10 bg-transparent text-muted-foreground hover:bg-white/5 hover:text-white font-bold uppercase tracking-widest text-xs transition-all magnetic-target">
-              File Another Report
-            </Button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
       
-      <div className="w-full max-w-lg relative z-10">
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-muted-foreground hover:text-white mb-10 magnetic-target transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Home
-        </Link>
+      {/* Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-900/20 via-background to-background z-0" />
+      
+      <div className="relative z-10 w-full max-w-xl glass-panel rounded-3xl border border-white/10 p-8 overflow-hidden">
         
         <div className="text-center mb-10">
-          <ShieldAlert className="h-12 w-12 text-primary mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-white editorial-heading tracking-wide">REPORT AN EMERGENCY</h1>
-          <p className="text-muted-foreground mt-3 text-sm">Send an SOS to the command center. Our AI will analyze your text, voice, and photos instantly.</p>
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
+            <AlertTriangle className="w-6 h-6 text-red-500" />
+          </div>
+          <h1 className="text-2xl font-bold text-white uppercase tracking-widest">Emergency SOS</h1>
+          <p className="text-xs text-slate-400 mt-2">PralayDrishti Triage Network</p>
         </div>
 
-        {status === "error" && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 rounded-xl bg-red-900/20 border border-primary/30 flex items-start gap-3 text-primary">
-            <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-            <p className="text-sm font-medium">Failed to submit report. Please try again or call emergency services directly.</p>
-          </motion.div>
-        )}
-
-        <form onSubmit={handleSubmit} className="glass-panel p-6 sm:p-8 rounded-3xl shadow-2xl">
-          <div className="space-y-6">
-            
-            {/* Audio & Text Input */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-[10px] font-bold tracking-widest uppercase text-muted-foreground">What is happening?</label>
-                <button 
-                  type="button" 
-                  onClick={startVoiceDictation} 
-                  className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full flex items-center gap-2 transition-colors magnetic-target ${isListening ? 'bg-primary text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-white/5 border border-white/10 text-muted-foreground hover:text-white hover:bg-white/10'}`}
-                >
-                  <Mic className="w-3 h-3" /> {isListening ? "Listening..." : "Dictate (HI/EN)"}
-                </button>
+        <AnimatePresence mode="wait">
+          
+          {step === 1 && (
+            <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">1. Select Emergency Type</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {['FLOOD', 'FIRE', 'COLLAPSE', 'MEDICAL', 'CYCLONE', 'LANDSLIDE'].map(h => (
+                  <button 
+                    key={h}
+                    onClick={() => setFormData({ ...formData, hazard: h })}
+                    className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${formData.hazard === h ? 'bg-red-500/20 border-red-500 text-white' : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}`}
+                  >
+                    <Activity className="w-6 h-6" />
+                    <span className="text-[10px] font-bold tracking-wider uppercase">{h}</span>
+                  </button>
+                ))}
               </div>
-              <textarea
-                required
-                rows={4}
-                value={formData.text}
-                onChange={(e) => setFormData({...formData, text: e.target.value})}
-                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm"
-                placeholder="Describe the emergency..."
-              />
-            </div>
+              <Button onClick={() => setStep(2)} disabled={!formData.hazard} className="w-full mt-8 bg-white text-black hover:bg-slate-200 uppercase tracking-widest text-xs font-bold">Next Step</Button>
+            </motion.div>
+          )}
 
-            {/* Photo Upload */}
-            <div>
-              <label className="block text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-3">Attach Photo (Optional)</label>
-              <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleImageUpload} />
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className={`w-full border border-dashed rounded-xl p-6 text-center cursor-pointer transition-all magnetic-target ${formData.image_data ? 'border-emerald-500 bg-emerald-500/10' : 'border-white/20 hover:border-white/40 bg-black/40'}`}
-              >
-                {formData.image_data ? (
-                  <div className="flex flex-col items-center text-emerald-400">
-                    <CheckCircle className="w-8 h-8 mb-2" />
-                    <span className="text-xs font-bold tracking-widest uppercase">Photo Attached</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center text-muted-foreground">
-                    <Camera className="w-8 h-8 mb-3 opacity-50" />
-                    <span className="text-xs font-bold tracking-widest uppercase text-white mb-1">Tap to upload photo</span>
-                    <span className="text-[10px] uppercase tracking-wider opacity-50">AI will estimate severity from image</span>
-                  </div>
+          {step === 2 && (
+            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">2. Location & Condition</h2>
+              
+              <div className="mb-6">
+                <Button onClick={getGPS} variant="outline" className="w-full h-14 border-white/20 text-white hover:bg-white/10 uppercase tracking-widest text-xs font-bold mb-2">
+                  <MapPin className="w-4 h-4 mr-2" /> Capture GPS Location
+                </Button>
+                <div className="text-center text-[10px] text-slate-400 font-mono">{locationStatus}</div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Headcount</label>
+                  <input type="number" min="1" value={formData.victim_status.headcount} onChange={e => setFormData({...formData, victim_status: {...formData.victim_status, headcount: parseInt(e.target.value)}})} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-red-500" />
+                </div>
+                
+                <label className="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-black/30 cursor-pointer hover:border-red-500/50">
+                  <input type="checkbox" checked={formData.victim_status.trapped} onChange={e => setFormData({...formData, victim_status: {...formData.victim_status, trapped: e.target.checked}})} className="w-4 h-4 rounded bg-black border-white/20" />
+                  <span className="text-xs font-bold text-white uppercase">People Trapped</span>
+                </label>
+                
+                {formData.hazard === 'FLOOD' && (
+                  <label className="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-black/30 cursor-pointer hover:border-blue-500/50">
+                    <input type="checkbox" checked={formData.victim_status.water_rising} onChange={e => setFormData({...formData, victim_status: {...formData.victim_status, water_rising: e.target.checked}})} className="w-4 h-4 rounded bg-black border-white/20" />
+                    <span className="text-xs font-bold text-white uppercase">Water Rising Fast</span>
+                  </label>
                 )}
               </div>
-            </div>
 
-            <div>
-              <label className="block text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-3">Location</label>
-              <div className="relative">
-                <MapPin className="absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  required
-                  value={formData.location}
-                  onChange={(e) => setFormData({...formData, location: e.target.value})}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm"
-                  placeholder="Address or landmark"
-                />
+              <div className="flex gap-3 mt-8">
+                <Button onClick={() => setStep(1)} variant="outline" className="w-1/3 border-white/20 text-white uppercase tracking-widest text-xs font-bold">Back</Button>
+                <Button onClick={() => setStep(3)} disabled={!formData.lat} className="w-2/3 bg-white text-black hover:bg-slate-200 uppercase tracking-widest text-xs font-bold">Next Step</Button>
               </div>
-            </div>
+            </motion.div>
+          )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-3">People Affected</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={formData.people}
-                  onChange={(e) => setFormData({...formData, people: e.target.value})}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm mono-number"
-                  placeholder="e.g. 5"
-                />
+          {step === 3 && (
+            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">3. Submit Alert</h2>
+              
+              <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 mb-8">
+                <p className="text-xs text-red-200 text-center uppercase tracking-wider font-bold">
+                  Warning: Misuse of this system is a federal offense. Only submit if life is in immediate danger.
+                </p>
               </div>
-              <div>
-                <label className="block text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-3">Contact (Optional)</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm"
-                  placeholder="Phone or name"
-                />
-              </div>
-            </div>
 
-            {/* Slider Button */}
-            <div className="relative mt-8 h-16 bg-black/50 border border-white/10 rounded-full overflow-hidden flex items-center shadow-inner">
-              <div className="absolute inset-0 flex items-center justify-center text-xs font-bold tracking-widest uppercase text-muted-foreground z-0">
-                {loading ? "Sending Signal..." : "Slide to SOS"}
+              <div className="flex gap-3">
+                <Button onClick={() => setStep(2)} variant="outline" className="w-1/3 border-white/20 text-white uppercase tracking-widest text-xs font-bold">Back</Button>
+                <Button onClick={submitReport} disabled={submitting} className="w-2/3 bg-red-600 hover:bg-red-700 text-white uppercase tracking-widest text-xs font-bold">
+                  {submitting ? 'Transmitting...' : 'TRANSMIT SOS'}
+                </Button>
               </div>
-              <motion.div
-                drag={!loading ? "x" : false}
-                dragConstraints={{ left: 0, right: 280 }}
-                dragElastic={0.1}
-                dragSnapToOrigin={true}
-                onDragEnd={(e, info) => {
-                  if (info.offset.x > 200) {
-                    // Trigger submit
-                    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
-                    handleSubmit(fakeEvent);
-                  }
-                }}
-                className={`relative z-10 w-16 h-16 rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing ${loading ? 'bg-primary/50' : 'bg-primary shadow-[0_0_20px_rgba(239,68,68,0.5)]'}`}
-              >
-                {loading ? <Loader2 className="h-6 w-6 text-white animate-spin" /> : <ArrowRight className="h-6 w-6 text-white" />}
-              </motion.div>
-            </div>
-          </div>
-        </form>
+            </motion.div>
+          )}
+
+          {step === 4 && ticket && (
+            <motion.div key="step4" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 mb-6">
+                <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+              </div>
+              <h2 className="text-xl font-black text-white uppercase tracking-widest mb-2">SOS Received</h2>
+              <div className="text-sm text-slate-400 mb-8">Rescue forces have been notified.</div>
+              
+              <div className="glass-panel p-6 rounded-2xl border border-white/10 mb-8 space-y-4">
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Ticket ID</div>
+                  <div className="text-2xl font-black text-white mono-number tracking-wider">{ticket.ticket_id}</div>
+                </div>
+                <div className="w-full h-px bg-white/10" />
+                <div>
+                  <div className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Estimated Survival Window</div>
+                  <div className="text-2xl font-black text-red-500 mono-number tracking-wider">{ticket.remaining_time_minutes} MIN</div>
+                </div>
+              </div>
+
+              <a href={ticket.status_url} target="_blank" rel="noreferrer">
+                <Button className="w-full h-14 bg-white text-black hover:bg-slate-200 uppercase tracking-widest text-xs font-bold shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                  Open Live Status Tracker
+                </Button>
+              </a>
+            </motion.div>
+          )}
+
+        </AnimatePresence>
       </div>
     </div>
   );
