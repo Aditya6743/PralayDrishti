@@ -64,12 +64,21 @@ const MapResizer = () => {
   const map = useMap();
   useEffect(() => {
     // Initial flush
-    setTimeout(() => { map.invalidateSize(); }, 250);
-    setTimeout(() => { map.invalidateSize(); }, 1000);
+    const flush = () => {
+      const el = map.getContainer();
+      if (el && el.clientWidth > 0 && el.clientHeight > 0) map.invalidateSize();
+    };
+    setTimeout(flush, 250);
+    setTimeout(flush, 1000);
 
     // Watch for parent flex resizes
     const resizeObserver = new ResizeObserver(() => {
-      map.invalidateSize();
+      const el = map.getContainer();
+      if (el && el.clientWidth > 0 && el.clientHeight > 0) {
+        requestAnimationFrame(() => {
+          map.invalidateSize();
+        });
+      }
     });
     
     const container = map.getContainer();
