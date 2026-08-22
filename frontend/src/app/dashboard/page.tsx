@@ -175,7 +175,7 @@ export default function TTCDashboard() {
 
         {/* RIGHT PANEL / MOBILE OVERLAY: INCIDENT DETAILS */}
         <AnimatePresence>
-          {selectedTicket && (
+          {selectedTicket ? (
             <motion.div 
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -282,6 +282,17 @@ export default function TTCDashboard() {
                 </Button>
               </div>
 
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="hidden md:flex flex-col items-center justify-center absolute md:relative inset-0 md:inset-auto self-stretch w-full md:w-[400px] lg:w-[450px] bg-[#020617]/50 border-l border-white/10 shrink-0 order-3 p-8 text-center"
+            >
+              <Target className="w-16 h-16 opacity-20 mb-4 text-slate-500" />
+              <h3 className="text-slate-400 font-bold tracking-[0.2em] text-[10px] uppercase">Awaiting Selection</h3>
+              <p className="text-slate-600 text-xs mt-2">Select an incident from the queue or map to view live telemetry and deploy UAVs.</p>
             </motion.div>
           )}
         </AnimatePresence>

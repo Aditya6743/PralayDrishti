@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, useMap, LayersControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.heat";
+import "leaflet/dist/leaflet.css";
 
 const HeatmapLayer = ({ incidents }: { incidents: Incident[] }) => {
   const map = useMap();
