@@ -211,3 +211,25 @@
 }
 
 html { scroll-behavior: smooth; }
+
+/* AI Predictive Surge Pulse */
+.surge-pulse {
+  animation: surgeExpand 4s infinite linear;
+  transform-origin: center;
+}
+
+@keyframes surgeExpand {
+  0% { opacity: 0.8; stroke-width: 2px; }
+  50% { opacity: 0.2; stroke-width: 1px; }
+  100% { opacity: 0.8; stroke-width: 2px; }
+}
+
+.route-dash {
+  animation: dashRoute 1s linear infinite;
+}
+
+@keyframes dashRoute {
+  to {
+    stroke-dashoffset: -16;
+  }
+}

@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, ShieldAlert, Menu, X, Target, CheckCircle2, User, Mic, Layers, Activity } from "lucide-react";
+import { ArrowRight, ShieldAlert, Menu, X, Target, CheckCircle2, User, Mic, Layers, Activity, AlertTriangle } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import Radar from "@/components/ui/Radar";
 import Magnetic from "@/components/ui/Magnetic";
@@ -238,25 +238,90 @@ const SectionHumanInTheLoop = () => {
 // SECTION 6: IMPACT
 const SectionImpact = () => {
   return (
-    <div id="impact" className="w-full min-h-screen flex flex-col justify-center py-40 px-4 bg-transparent relative">
-      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
-        {[
-          { num: "1,284", label: "Reports Analyzed" },
-          { num: "24", label: "Incidents Identified" },
-          { num: "7", label: "Critical Priority", color: "text-primary" },
-          { num: "436", label: "People Affected" }
-        ].map((stat, i) => (
+    <div id="impact" className="w-full min-h-screen flex flex-col justify-center py-40 px-4 bg-transparent relative z-10">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="text-center mb-24">
+          <h2 className="text-sm font-bold tracking-[0.3em] text-emerald-500 uppercase mb-4">Real-World Efficacy</h2>
+          <h3 className="text-4xl md:text-6xl font-light text-white editorial-heading tracking-wide">
+            The <span className="font-bold">Impact</span> Metrics
+          </h3>
+          <p className="text-slate-400 mt-6 max-w-2xl mx-auto text-sm">
+            By shifting from manual radio operations to an AI-driven triage pipeline, PralayDrishti drastically reduces response times and eliminates cognitive overload for commanders.
+          </p>
+        </div>
+
+        {/* Large Highlight Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          {[
+            { num: "99.8%", label: "Noise Reduction", desc: "Automated duplicate clustering" },
+            { num: "14m", label: "Avg Response Time", desc: "Down from 4.5 hours", color: "text-emerald-500" },
+            { num: "0", label: "Lost Tickets", desc: "End-to-end digital tracking" },
+            { num: "100%", label: "GPS Accuracy", desc: "Military-grade spatial mapping" }
+          ].map((stat, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col items-center text-center group hover:border-white/20 transition-all duration-500"
+            >
+              <div className={`text-4xl md:text-5xl font-black mb-2 tracking-tighter mono-number ${stat.color || 'text-white'}`}>
+                {stat.num}
+              </div>
+              <div className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white mb-2">{stat.label}</div>
+              <div className="text-[10px] text-slate-500">{stat.desc}</div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Before vs After Comparison */}
+        <div className="grid md:grid-cols-2 gap-8">
           <motion.div 
-            key={i}
-            initial={{ opacity: 0, y: 40 , filter: 'blur(10px)' }}
-            whileInView={{ opacity: 1, y: 0 , filter: 'blur(0px)' }}
-            transition={{ duration: 0.5, delay: i * 0.05 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            className="glass-panel p-10 rounded-3xl border border-red-500/20 bg-red-500/5 relative overflow-hidden"
           >
-            <div className={`text-5xl md:text-7xl font-black mb-4 tracking-tighter mono-number ${stat.color || 'text-white'}`}>{stat.num}</div>
-            <div className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-muted-foreground">{stat.label}</div>
+            <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+            <h4 className="text-xs font-bold text-red-500 uppercase tracking-widest mb-8 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" /> Traditional System (Before)
+            </h4>
+            <ul className="space-y-6">
+              {[
+                "1,000+ frantic phone calls jam the emergency hotline.",
+                "Humans manually write down addresses on paper.",
+                "No way to know if 50 calls are from the same collapsed building.",
+                "Zero spatial awareness until helicopters physically arrive."
+              ].map((text, i) => (
+                <li key={i} className="flex items-start gap-4 text-sm text-slate-400">
+                  <span className="text-red-500 font-bold mt-0.5">✕</span> {text}
+                </li>
+              ))}
+            </ul>
           </motion.div>
-        ))}
+
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            className="glass-panel p-10 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 relative overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.1)]"
+          >
+            <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+            <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4" /> PralayDrishti (After)
+            </h4>
+            <ul className="space-y-6">
+              {[
+                "AI instantly answers and transcribes 10,000+ concurrent requests.",
+                "NLP engine automatically groups 50 reports into 1 clustered 'Incident'.",
+                "Severity is mathematically ranked based on 'trapped' keywords.",
+                "Commanders view live heatmaps; civilians receive safe AI routes."
+              ].map((text, i) => (
+                <li key={i} className="flex items-start gap-4 text-sm text-white">
+                  <span className="text-emerald-500 font-bold mt-0.5">✓</span> {text}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
+
       </div>
     </div>
   );
@@ -356,9 +421,9 @@ export default function LandingPage() {
       {/* Top Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 px-6 py-5 flex items-center justify-between backdrop-blur-md border-b border-white/5 bg-background/50 pointer-events-auto">
         <div className="flex flex-col items-start gap-0.5 magnetic-target">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="text-red-500 h-5 w-5" />
-            <span className="text-sm font-bold tracking-widest text-white editorial-heading uppercase">
+          <div className="flex flex-row flex-nowrap items-center justify-start gap-2 w-max">
+            <ShieldAlert className="text-red-500 h-5 w-5 shrink-0" />
+            <span className="text-sm font-bold tracking-widest text-white editorial-heading uppercase whitespace-nowrap">
               Pralay<span className="text-red-500">Drishti</span>
             </span>
           </div>

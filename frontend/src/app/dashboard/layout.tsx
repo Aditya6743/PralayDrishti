@@ -155,11 +155,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         className="fixed top-0 left-0 right-0 z-50 px-6 py-3 mx-4 mt-4 glass-panel rounded-2xl flex items-center justify-between shadow-2xl"
       >
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 magnetic-target">
-            <ShieldAlert className="text-red-500 h-5 w-5" />
-            <span className="text-sm font-bold tracking-widest text-white editorial-heading uppercase">
-              PRALAY<span className="text-red-500">DRISHTI</span>
-            </span>
+          <Link href="/" className="magnetic-target block w-max">
+            <div className="flex flex-row flex-nowrap items-center justify-start gap-2 w-max">
+              <ShieldAlert className="text-red-500 h-5 w-5 shrink-0" />
+              <span className="text-sm font-bold tracking-widest text-white editorial-heading uppercase whitespace-nowrap">
+                PRALAY<span className="text-red-500">DRISHTI</span>
+              </span>
+            </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/5">

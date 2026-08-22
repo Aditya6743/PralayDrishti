@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, useMap, LayersControl } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap, LayersControl, Circle } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.heat";
 
@@ -233,6 +233,26 @@ export default function MapComponent({
       <MapResizer />
       <HeatmapLayer incidents={incidents} />
       
+      {/* Predictive Surge Forecast Zones (AI Expansion) */}
+      {incidents.map((incident) => {
+        if (incident.severity !== 'CRITICAL' || !incident.latitude || !incident.longitude) return null;
+        return (
+          <Circle 
+            key={`surge-${incident.ticket_id || incident.id}`}
+            center={[incident.latitude, incident.longitude]}
+            radius={2500}
+            pathOptions={{ 
+              color: '#ef4444', 
+              fillColor: '#ef4444', 
+              fillOpacity: 0.05, 
+              weight: 1, 
+              dashArray: '5, 10',
+              className: 'surge-pulse' 
+            }}
+          />
+        );
+      })}
+
       <MapController incidents={incidents} selectedIncidentId={selectedIncidentId} />
       
       {incidents.map((incident) => {

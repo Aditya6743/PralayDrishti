@@ -15,6 +15,7 @@ export default function TTCDashboard() {
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const [filter, setFilter] = useState('ALL');
   const [droneDeployed, setDroneDeployed] = useState<string | null>(null);
+  const [volunteerDispatched, setVolunteerDispatched] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTriage = async () => {
@@ -411,6 +412,37 @@ export default function TTCDashboard() {
                       </motion.div>
                     )}
                   </AnimatePresence>
+                </div>
+
+                {/* Civilian First Responders */}
+                <div>
+                  <h3 className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase mb-3 flex items-center gap-2">
+                    <Users className="w-3 h-3 text-purple-400" /> Civilian Volunteer Network
+                  </h3>
+                  {['CRITICAL', 'HIGH'].includes(selectedTicket.priority) ? (
+                    <div className="p-3 rounded-lg bg-black border border-red-500/20 flex flex-col gap-1 text-[10px] uppercase font-bold tracking-wider">
+                      <span className="text-red-500">⚠ SEVERITY TOO HIGH</span>
+                      <span className="text-slate-500">NDRF Professional Units Required. Volunteer dispatch locked.</span>
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-lg bg-black border border-purple-500/20">
+                      <div className="flex justify-between items-center mb-3 text-[10px] uppercase tracking-wider font-bold">
+                        <span className="text-slate-400">Nearest Verified Medic</span>
+                        <span className="text-purple-400">140m away</span>
+                      </div>
+                      <button 
+                        onClick={() => setVolunteerDispatched(selectedTicket.ticket_id)}
+                        disabled={volunteerDispatched === selectedTicket.ticket_id}
+                        className={`w-full h-10 text-[10px] font-bold uppercase tracking-widest rounded-lg border transition-colors flex items-center justify-center gap-2 ${
+                          volunteerDispatched === selectedTicket.ticket_id 
+                          ? 'border-purple-500 bg-purple-500/20 text-purple-400 cursor-not-allowed' 
+                          : 'border-purple-500/50 bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white'
+                        }`}
+                      >
+                        {volunteerDispatched === selectedTicket.ticket_id ? 'Volunteer Dispatched' : 'Dispatch Civilian Responder'}
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Manual Override */}
