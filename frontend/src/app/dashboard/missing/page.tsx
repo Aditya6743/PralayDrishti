@@ -26,6 +26,25 @@ export default function MissingPersonsPage() {
   const [matchResult, setMatchResult] = useState<{ desc: string, score: number } | null>(null);
   const [finderNotified, setFinderNotified] = useState(false);
 
+  const [isSendingSMS, setIsSendingSMS] = useState(false);
+
+  const dispatchRealSMS = async () => {
+    setIsSendingSMS(true);
+    try {
+      await fetch('/api/sms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: "🚨 PralayDrishti Alert: High-confidence AI Match confirmed. Family located. Standby at Relief Camp Alpha (Sector 12) for handover."
+        })
+      });
+      setFinderNotified(true);
+    } catch (e) {
+      alert("SMS failed to send");
+    }
+    setIsSendingSMS(false);
+  };
+
   const reportFound = (e: React.FormEvent) => {
     e.preventDefault();
     if (!foundDesc) return;
@@ -183,8 +202,8 @@ export default function MissingPersonsPage() {
                 
                 <div className="mt-4 pt-4 border-t border-emerald-500/20">
                   <button 
-                    onClick={() => setFinderNotified(true)}
-                    disabled={finderNotified}
+                    onClick={dispatchRealSMS}
+                    disabled={finderNotified || isSendingSMS}
                     className={`w-full py-3 font-bold text-[10px] uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 ${
                       finderNotified 
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 

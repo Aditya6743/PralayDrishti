@@ -476,8 +476,18 @@ export default function TTCDashboard() {
                               [EMERGENCY ALERT] {selectedTicket.hazard} detected near your location. Evacuate immediately following AI safe-routes. Avoid main highways.
                             </div>
                             <button 
-                              onClick={() => {
+                              onClick={async () => {
                                 setSmsBroadcastSent(true);
+                                
+                                // SEND REAL SMS VIA TWILIO
+                                await fetch('/api/sms', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    message: `⚠️ PralayDrishti MASS ALERT: ${selectedTicket.hazard} detected near your GPS location. Evacuate via safe-routes immediately.`
+                                  })
+                                });
+
                                 setTimeout(() => {
                                   setSmsBroadcastOpen(null);
                                   setSmsBroadcastSent(false);
