@@ -17,7 +17,8 @@ export default function PublicMissingPage() {
     
     // Save to localStorage so the Control Room can read it for the demo
     const existing = JSON.parse(localStorage.getItem('pralay_missing_db') || '[]');
-    localStorage.setItem('pralay_missing_db', JSON.stringify([missingDesc, ...existing]));
+    const newEntry = { desc: missingDesc, phone: contactPhone || process.env.NEXT_PUBLIC_DEFAULT_PHONE || "" };
+    localStorage.setItem('pralay_missing_db', JSON.stringify([newEntry, ...existing]));
     
     setSubmitted(true);
   };

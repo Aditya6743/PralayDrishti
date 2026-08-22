@@ -8,9 +8,9 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function MissingPersonsPage() {
   const [foundDesc, setFoundDesc] = useState("");
   
-  const [missingDB, setMissingDB] = useState<string[]>([
-    "70 year old grandmother wearing blue saree, lost near Sector 4 flood zone.",
-    "Young boy wearing red Spiderman shirt, non-verbal autism, last seen near main highway."
+  const [missingDB, setMissingDB] = useState<any[]>([
+    { desc: "70 year old grandmother wearing blue saree, lost near Sector 4 flood zone.", phone: "+916396558074" },
+    { desc: "Young boy wearing red Spiderman shirt, non-verbal autism, last seen near main highway.", phone: "+916396558074" }
   ]);
   
   // Sync with public reports from localStorage
@@ -23,7 +23,7 @@ export default function MissingPersonsPage() {
   
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
-  const [matchResult, setMatchResult] = useState<{ desc: string, score: number } | null>(null);
+  const [matchResult, setMatchResult] = useState<{ desc: any, score: number } | null>(null);
   const [finderNotified, setFinderNotified] = useState(false);
 
   const [isSendingSMS, setIsSendingSMS] = useState(false);
@@ -35,6 +35,7 @@ export default function MissingPersonsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          to: matchResult?.desc?.phone,
           message: "🚨 PralayDrishti Alert: High-confidence AI Match confirmed. Family located. Standby at Relief Camp Alpha (Sector 12) for handover."
         })
       });
@@ -96,9 +97,6 @@ export default function MissingPersonsPage() {
             Input: Recovered Subject
           </h2>
           <form onSubmit={reportFound} className="space-y-4 relative z-10">
-              />
-            </div>
-            
             <textarea 
               required value={foundDesc} onChange={e=>setFoundDesc(e.target.value)} 
               placeholder="e.g. Rescued an elderly woman in a blue saree near Sector 4..." 
@@ -147,7 +145,7 @@ export default function MissingPersonsPage() {
             {missingDB.map((desc, i) => (
               <div key={i} className="text-xs text-slate-400 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
                 <div className="text-white font-mono text-[9px] mb-2 opacity-50">NODE_ID: {10293 + i}</div>
-                "{desc}"
+                "{desc.desc}"
               </div>
             ))}
           </div>
@@ -184,7 +182,7 @@ export default function MissingPersonsPage() {
                   </div>
                   <div className="p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/20">
                     <div className="text-[9px] text-emerald-500 uppercase tracking-widest mb-2 font-bold">Matched: Public Missing Registry</div>
-                    <p className="text-sm text-white font-medium">"{matchResult.desc}"</p>
+                    <p className="text-sm text-white font-medium">"{matchResult.desc.desc}"</p>
                   </div>
                 </div>
                 <div className="mt-6 p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/30 flex flex-col gap-3">
