@@ -92,7 +92,7 @@ export default function MissingPersonsPage() {
               className="w-full bg-black/60 border border-purple-500/20 p-4 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500/50 placeholder:text-purple-200/20" 
               rows={5} 
             />
-            <Button disabled={isScanning} className="w-full bg-purple-600 text-white font-bold uppercase tracking-widest text-xs h-12 rounded-xl hover:bg-purple-500 transition-colors">
+            <Button type="submit" disabled={isScanning} className="w-full bg-purple-600 text-white font-bold uppercase tracking-widest text-xs h-12 rounded-xl hover:bg-purple-500 transition-colors">
               {isScanning ? "Processing..." : "Run Semantic Vector Match"}
             </Button>
           </form>

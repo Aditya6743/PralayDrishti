@@ -57,7 +57,7 @@ export default function PublicMissingPage() {
                 rows={5} 
               />
             </div>
-            <Button className="w-full h-12 bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-widest text-xs rounded-xl transition-colors shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+            <Button type="submit" className="w-full h-12 bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-widest text-xs rounded-xl transition-colors shadow-[0_0_15px_rgba(37,99,235,0.4)]">
               Submit to Global Registry
             </Button>
           </form>
