@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, ShieldAlert, Menu, X, Target, CheckCircle2, User, Mic, Layers, Activity, AlertTriangle } from "lucide-react";
+import { ArrowRight, ShieldAlert, Menu, X, Target, CheckCircle2, User, Mic, Layers, Activity, AlertTriangle, UserPlus } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import Radar from "@/components/ui/Radar";
 import Magnetic from "@/components/ui/Magnetic";
@@ -356,16 +356,29 @@ const SectionFinalCTA = () => {
           Turn information overload into actionable emergency intelligence.
         </p>
 
-        <Magnetic strength={0.2}>
-          <Link href="/dashboard">
-            <button className="group relative px-10 py-5 bg-white hover:bg-neutral-200 text-black font-bold tracking-widest uppercase text-xs rounded-full overflow-hidden transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.4)]">
-              <span className="relative z-10 flex items-center gap-2">
-                ENTER THE CONTROL ROOM
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
-          </Link>
-        </Magnetic>
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <Magnetic strength={0.2}>
+            <Link href="/dashboard">
+              <button className="group relative px-10 py-5 bg-white hover:bg-neutral-200 text-black font-bold tracking-widest uppercase text-xs rounded-full overflow-hidden transition-all shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.4)]">
+                <span className="relative z-10 flex items-center gap-2">
+                  ENTER THE CONTROL ROOM
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </button>
+            </Link>
+          </Magnetic>
+
+          <Magnetic strength={0.2}>
+            <Link href="/missing">
+              <button className="group relative px-10 py-5 bg-black hover:bg-black/80 text-white font-bold tracking-widest uppercase text-xs rounded-full overflow-hidden transition-all border border-white/20 shadow-[0_0_30px_rgba(255,255,255,0.05)] hover:border-white/50">
+                <span className="relative z-10 flex items-center gap-2">
+                  REPORT MISSING PERSON
+                  <UserPlus className="w-4 h-4 group-hover:text-blue-400 transition-colors" />
+                </span>
+              </button>
+            </Link>
+          </Magnetic>
+        </div>
       </div>
     </div>
   );

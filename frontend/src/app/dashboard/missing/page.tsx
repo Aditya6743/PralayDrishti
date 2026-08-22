@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, UserPlus, CheckCircle2, Activity, Fingerprint, Database, Network } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function MissingPersonsPage() {
-  const [missingDesc, setMissingDesc] = useState("");
   const [foundDesc, setFoundDesc] = useState("");
   
   const [missingDB, setMissingDB] = useState<string[]>([
@@ -14,17 +13,17 @@ export default function MissingPersonsPage() {
     "Young boy wearing red Spiderman shirt, non-verbal autism, last seen near main highway."
   ]);
   
+  // Sync with public reports from localStorage
+  useEffect(() => {
+    const publicReports = JSON.parse(localStorage.getItem('pralay_missing_db') || '[]');
+    if (publicReports.length > 0) {
+      setMissingDB([...publicReports, ...missingDB]);
+    }
+  }, []);
+  
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
   const [matchResult, setMatchResult] = useState<{ desc: string, score: number } | null>(null);
-
-  const reportMissing = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!missingDesc) return;
-    setMissingDB([missingDesc, ...missingDB]);
-    setMissingDesc("");
-    alert("Subject securely logged to global missing registry.");
-  };
 
   const reportFound = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,42 +71,13 @@ export default function MissingPersonsPage() {
           <Network className="text-purple-500 w-8 h-8" /> AI Cross-Linker
         </h1>
         <p className="text-slate-400 text-sm mt-2 max-w-2xl">
-          Utilizing semantic vector embeddings to automatically match unstructured "found" reports with missing person registries across fragmented databases.
+          Utilizing semantic vector embeddings to automatically match unstructured "found" rescue logs with the public civilian missing person registry.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 relative z-10">
-        {/* Missing Panel */}
-        <div className="glass-panel p-8 rounded-3xl border border-white/10 bg-black/40">
-          <h2 className="text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-6 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><UserPlus className="w-4 h-4 text-white"/></div>
-            Registry: Missing Persons
-          </h2>
-          <form onSubmit={reportMissing} className="space-y-4">
-            <textarea 
-              required value={missingDesc} onChange={e=>setMissingDesc(e.target.value)} 
-              placeholder="e.g. 70 year old grandmother wearing blue saree..." 
-              className="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-white/20" 
-              rows={5} 
-            />
-            <Button className="w-full bg-white text-black font-bold uppercase tracking-widest text-xs h-12 rounded-xl hover:bg-slate-200 transition-colors">
-              Log Missing Subject
-            </Button>
-          </form>
-          
-          <div className="mt-8">
-            <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Active Registry (Sample)</h3>
-            <div className="space-y-2">
-              {missingDB.slice(0,3).map((desc, i) => (
-                <div key={i} className="text-xs text-slate-400 p-3 rounded-lg border border-white/5 bg-white/[0.02] truncate">
-                  {desc}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Found Panel */}
+        
+        {/* Found Panel (The Input) */}
         <div className="glass-panel p-8 rounded-3xl border border-purple-500/20 bg-purple-500/5 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 blur-[100px] rounded-full"></div>
           
@@ -153,6 +123,23 @@ export default function MissingPersonsPage() {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Global Registry Feed (Read Only) */}
+        <div className="glass-panel p-8 rounded-3xl border border-white/10 bg-black/40 flex flex-col">
+          <h2 className="text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-6 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><Database className="w-4 h-4 text-white"/></div>
+            Live Civilian Registry Feed
+          </h2>
+          <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar">
+            {missingDB.map((desc, i) => (
+              <div key={i} className="text-xs text-slate-400 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+                <div className="text-white font-mono text-[9px] mb-2 opacity-50">NODE_ID: {10293 + i}</div>
+                "{desc}"
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
 
       {/* Result Panel */}
@@ -183,7 +170,7 @@ export default function MissingPersonsPage() {
                     <p className="text-sm text-slate-300 italic">"{foundDesc}"</p>
                   </div>
                   <div className="p-4 bg-emerald-900/20 rounded-xl border border-emerald-500/20">
-                    <div className="text-[9px] text-emerald-500 uppercase tracking-widest mb-2 font-bold">Matched: Missing Registry</div>
+                    <div className="text-[9px] text-emerald-500 uppercase tracking-widest mb-2 font-bold">Matched: Public Missing Registry</div>
                     <p className="text-sm text-white font-medium">"{matchResult.desc}"</p>
                   </div>
                 </div>
