@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function MissingPersonsPage() {
   const [foundDesc, setFoundDesc] = useState("");
-  const [finderPhone, setFinderPhone] = useState("");
   
   const [missingDB, setMissingDB] = useState<string[]>([
     "70 year old grandmother wearing blue saree, lost near Sector 4 flood zone.",
@@ -97,15 +96,6 @@ export default function MissingPersonsPage() {
             Input: Recovered Subject
           </h2>
           <form onSubmit={reportFound} className="space-y-4 relative z-10">
-            <div>
-              <label className="text-[9px] font-bold tracking-widest uppercase text-slate-500 mb-1.5 block">Finder's Contact Number</label>
-              <input 
-                type="tel"
-                required 
-                value={finderPhone} 
-                onChange={e=>setFinderPhone(e.target.value)} 
-                placeholder="+91-XXXX-XXXXXX" 
-                className="w-full bg-black/60 border border-purple-500/20 p-4 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500/50 placeholder:text-purple-200/20 mb-4 font-mono" 
               />
             </div>
             
