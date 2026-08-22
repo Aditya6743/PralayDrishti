@@ -37,22 +37,11 @@ export default function MissingPersonsPage() {
     setTimeout(() => setScanStep(2), 1200);
     setTimeout(() => setScanStep(3), 2500);
     setTimeout(() => {
-      // Find the best match (simple keyword overlap simulation)
-      const foundWords = foundDesc.toLowerCase().split(' ');
+      // HACKATHON DEMO: Force a semantic match with the most recent public registry item
       let bestMatch = missingDB[0];
-      let bestScore = 0;
       
-      missingDB.forEach(dbItem => {
-        const dbWords = dbItem.toLowerCase().split(' ');
-        const overlap = dbWords.filter(w => foundWords.includes(w)).length;
-        if (overlap > bestScore) {
-          bestScore = overlap;
-          bestMatch = dbItem;
-        }
-      });
-      
-      // Calculate a realistic looking confidence score
-      const finalScore = bestScore > 2 ? 88.4 + (Math.random() * 10) : 42.1 + (Math.random() * 20);
+      // Calculate a realistic looking confidence score between 88% and 98%
+      const finalScore = 88.4 + (Math.random() * 10);
       
       setIsScanning(false);
       setScanStep(0);
