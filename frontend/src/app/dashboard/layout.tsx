@@ -148,8 +148,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Button>
           </form>
           
-          <div className="mt-8 text-[8px] text-slate-500 uppercase tracking-widest font-mono">
-            UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED
+          <div className="mt-8 flex flex-col items-center gap-2">
+            <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-[10px] text-emerald-400 font-mono tracking-widest uppercase">
+              Demo Passcode: <span className="font-bold text-emerald-300">ELICIT26</span>
+            </div>
+            <div className="text-[8px] text-slate-500 uppercase tracking-widest font-mono">
+              UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED
+            </div>
           </div>
         </motion.div>
       </div>
