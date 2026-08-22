@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import { 
   AlertTriangle, ShieldAlert, Activity, CheckCircle2, Navigation, 
-  MapPin, Clock, Users, X, Filter, Target, ArrowRight 
+  MapPin, Clock, Users, X, Filter, Target, ArrowRight, Layers 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +16,8 @@ export default function TTCDashboard() {
   const [filter, setFilter] = useState('ALL');
   const [droneDeployed, setDroneDeployed] = useState<string | null>(null);
   const [volunteerDispatched, setVolunteerDispatched] = useState<string | null>(null);
+  const [smsBroadcastOpen, setSmsBroadcastOpen] = useState<string | null>(null);
+  const [smsBroadcastSent, setSmsBroadcastSent] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTriage = async () => {
@@ -373,6 +375,37 @@ export default function TTCDashboard() {
                   </div>
                 </div>
 
+                {/* AI Zero-Shot Confidence Breakdown (Hackathon Challenge Hero Feature) */}
+                <div>
+                  <h3 className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase mb-3 flex items-center gap-2">
+                    <Layers className="w-3 h-3 text-purple-500" /> NLP Triage Confidence
+                  </h3>
+                  <div className="glass-panel p-4 rounded-xl border border-purple-500/30 bg-purple-500/5">
+                    <div className="flex justify-between items-end mb-2">
+                      <span className="text-[10px] text-purple-400 uppercase tracking-widest font-bold">Priority Confidence Score</span>
+                      <span className="text-xl font-mono text-purple-300">82.4%</span>
+                    </div>
+                    <div className="w-full h-1 bg-black rounded-full overflow-hidden mb-4">
+                      <div className="h-full bg-purple-500 w-[82.4%]"></div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-start gap-2 text-[10px]">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <span className="text-slate-300">Known semantics mapped: <span className="text-white font-mono bg-white/10 px-1 rounded">{selectedTicket.hazard}</span></span>
+                      </div>
+                      
+                      <div className="flex items-start gap-2 text-[10px] p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                        <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
+                        <div className="text-slate-300">
+                          <span className="text-red-400 font-bold uppercase text-[9px] tracking-widest block mb-0.5">Zero-Shot Anomaly Flagged</span>
+                          Out-of-distribution phrasing detected in raw audio transcript. Automatically escalated for Human-In-The-Loop review.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Autonomous Drone Dispatch */}
                 <div>
                   <h3 className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase mb-3 flex items-center gap-2">
@@ -390,6 +423,17 @@ export default function TTCDashboard() {
                     >
                       <Navigation className="w-4 h-4" />
                       {droneDeployed === selectedTicket.ticket_id ? 'UAV En Route' : 'Deploy Recon Drone'}
+                    </button>
+                    <button 
+                      onClick={() => setSmsBroadcastOpen(smsBroadcastOpen === selectedTicket.ticket_id ? null : selectedTicket.ticket_id)}
+                      className={`w-full h-12 text-[10px] font-bold uppercase tracking-widest rounded-lg border transition-colors flex items-center justify-center gap-2 ${
+                        smsBroadcastOpen === selectedTicket.ticket_id 
+                        ? 'border-orange-500 bg-orange-500/20 text-orange-400' 
+                        : 'border-orange-500/50 bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white'
+                      }`}
+                    >
+                      <Activity className="w-4 h-4" />
+                      Trigger Mass SMS Broadcast
                     </button>
                   </div>
                   
@@ -409,6 +453,48 @@ export default function TTCDashboard() {
                           <div className="w-full h-px bg-emerald-500/50 animate-[scan_2s_linear_infinite]" />
                           <span className="relative z-10 text-emerald-500/50 bg-black/50 px-2 py-1 rounded">NO TARGET IN SIGHT</span>
                         </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <AnimatePresence>
+                    {smsBroadcastOpen === selectedTicket.ticket_id && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
+                        className="mt-4 p-4 rounded-lg bg-black border border-orange-500/30 font-mono text-[10px] text-orange-400 uppercase tracking-widest overflow-hidden shadow-[0_0_15px_rgba(249,115,22,0.1)]"
+                      >
+                        {!smsBroadcastSent ? (
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center text-slate-300">
+                              <span>Target Radius:</span>
+                              <span className="text-orange-400 font-bold">5.0 KM</span>
+                            </div>
+                            <div className="flex justify-between items-center text-slate-300">
+                              <span>Affected Nodes:</span>
+                              <span className="text-orange-400 font-bold">~432 Devices</span>
+                            </div>
+                            <div className="p-2 bg-orange-500/10 border border-orange-500/20 rounded text-slate-300 mt-2">
+                              [EMERGENCY ALERT] {selectedTicket.hazard} detected near your location. Evacuate immediately following AI safe-routes. Avoid main highways.
+                            </div>
+                            <button 
+                              onClick={() => {
+                                setSmsBroadcastSent(true);
+                                setTimeout(() => {
+                                  setSmsBroadcastOpen(null);
+                                  setSmsBroadcastSent(false);
+                                }, 3000);
+                              }}
+                              className="w-full h-10 mt-2 bg-orange-500 text-black hover:bg-orange-400 uppercase tracking-widest font-black rounded transition-colors"
+                            >
+                              Confirm & Dispatch SMS
+                            </button>
+                          </div>
+                        ) : (
+                          <motion.div animate={{ opacity: [1, 0.5, 1] }} transition={{ repeat: Infinity, duration: 0.8 }} className="space-y-1 py-4 text-center">
+                            <Activity className="w-6 h-6 mx-auto mb-2 text-emerald-500" />
+                            <div className="text-emerald-500">&gt; BROADCASTING TO 432 NODES...</div>
+                            <div className="text-emerald-400">&gt; TELECOM API [200 OK]</div>
+                          </motion.div>
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>

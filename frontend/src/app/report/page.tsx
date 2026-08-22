@@ -103,14 +103,11 @@ export default function ReportPortal() {
           setLocationStatus(`Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`);
         },
         (err) => {
-          // HACKATHON FALLBACK: If browser blocks GPS, use mock coordinates so demo doesn't fail
-          setFormData({ ...formData, lat: 28.6139, lng: 77.2090 });
-          setLocationStatus('Mock GPS Active (28.61, 77.20)');
+          setLocationStatus('Failed. Check browser permissions.');
         }
       );
     } else {
-      setFormData({ ...formData, lat: 28.6139, lng: 77.2090 });
-      setLocationStatus('Mock GPS Active (28.61, 77.20)');
+      setLocationStatus('GPS not supported on this browser.');
     }
   };
 
@@ -146,7 +143,7 @@ export default function ReportPortal() {
       {/* Background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-900/20 via-background to-background z-0" />
       
-      <div className="relative z-10 w-full max-w-xl glass-panel rounded-3xl border border-white/10 p-8 overflow-hidden">
+      <div className="relative z-10 w-full max-w-5xl glass-panel rounded-3xl border border-white/10 p-8 overflow-hidden">
         
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 mb-4">

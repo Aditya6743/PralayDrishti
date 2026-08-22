@@ -106,6 +106,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-6 z-[1000]">
+        
+        {/* Top Left Logo (Back to Home) */}
+        <Link href="/" className="absolute top-6 left-6 z-50 magnetic-target group cursor-pointer hover:opacity-80 transition-opacity">
+          <div className="flex flex-row flex-nowrap items-center justify-start gap-3 w-max shrink-0">
+            <ShieldAlert className="text-red-500 h-6 w-6 shrink-0" />
+            <span className="text-sm font-bold tracking-widest text-white editorial-heading uppercase whitespace-nowrap leading-none shrink-0">
+              Pralay<span className="text-red-500">Drishti</span>
+            </span>
+          </div>
+        </Link>
+
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.02),_transparent_70%)] pointer-events-none" />
         <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
         
