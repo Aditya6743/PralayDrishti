@@ -175,7 +175,7 @@ export default function MissingPersonsPage() {
                     {matchResult.score}% SIMILARITY
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                   <div className="p-4 bg-black/40 rounded-xl border border-white/5">
                     <div className="text-[9px] text-slate-500 uppercase tracking-widest mb-2 font-bold">Query: Recovered Subject</div>
                     <p className="text-sm text-slate-300 italic">"{foundDesc}"</p>

@@ -15,10 +15,16 @@ export async function POST(req: Request) {
 
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
 
+    // TRAI INDIA REGULATIONS: Trial accounts sending to +91 must use predefined templates
+    let finalBody = message || "PralayDrishti Automated System Alert.";
+    if (toNumber.startsWith("+91")) {
+      finalBody = "sms_appointment_reminders"; 
+    }
+
     const body = new URLSearchParams({
       To: toNumber,
       From: fromNumber,
-      Body: message || "PralayDrishti Automated System Alert."
+      Body: finalBody
     });
 
     const authHeader = "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64");

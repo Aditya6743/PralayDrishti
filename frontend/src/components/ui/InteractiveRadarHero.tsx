@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Play, ShieldAlert, Users, AlertTriangle, MapPin, Activity, UserPlus } from "lucide-react";
+import { ArrowRight, Play, ShieldAlert, Users, AlertTriangle, MapPin, Activity, UserPlus, Tent, ShieldCheck } from "lucide-react";
 import HeroRadar from "@/components/ui/HeroRadar";
 
 export default function InteractiveRadarHero() {
@@ -30,7 +30,7 @@ export default function InteractiveRadarHero() {
             const res = await fetch('/api/incidents');
             const data = await res.json();
             if (data && data.length > 0) {
-              const sorted = data.slice(0, 3).map((inc, i) => {
+              const sorted = data.slice(0, 3).map((inc: any, i: number) => {
                 let sev = 'Medium'; let col = '#eab308'; let bord = 'rgba(255,255,255,0.1)'; let icon = Users;
                 if (inc.severity === 'CRITICAL') { sev = 'Critical'; col = '#ef4444'; bord = 'rgba(239,68,68,0.3)'; icon = AlertTriangle; }
                 else if (inc.severity === 'HIGH') { sev = 'High'; col = '#f97316'; bord = 'rgba(249,115,22,0.3)'; icon = ShieldAlert; }
@@ -54,7 +54,7 @@ export default function InteractiveRadarHero() {
             const incidentRes = await fetch('/api/incidents');
             const incData = await incidentRes.json();
             if (incData && incData.length > 0) {
-              const sorted = incData.slice(0, 3).map((inc, i) => {
+              const sorted = incData.slice(0, 3).map((inc: any, i: number) => {
                 let sev = 'Medium'; let col = '#eab308'; let bord = 'rgba(255,255,255,0.1)'; let icon = Users;
                 if (inc.severity === 'CRITICAL') { sev = 'Critical'; col = '#ef4444'; bord = 'rgba(239,68,68,0.3)'; icon = AlertTriangle; }
                 else if (inc.severity === 'HIGH') { sev = 'High'; col = '#f97316'; bord = 'rgba(249,115,22,0.3)'; icon = ShieldAlert; }
@@ -124,6 +124,11 @@ export default function InteractiveRadarHero() {
 
         {/* Mobile Buttons */}
         <div className="flex flex-col gap-4 w-full max-w-sm">
+          <Link href="/camps" className="w-full">
+            <button className="w-full px-6 py-4 bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 text-blue-400 font-bold tracking-[0.1em] text-[10px] sm:text-xs rounded-full shadow-[0_0_20px_rgba(59,130,246,0.1)] flex items-center justify-center gap-2 transition-all">
+              <Tent className="w-4 h-4" /> LIVE RELIEF CAMPS
+            </button>
+          </Link>
           <Link href="/report" className="w-full">
             <button className="w-full px-6 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-bold tracking-[0.1em] text-[10px] sm:text-xs rounded-full shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2">
               SUBMIT SOS <Activity className="w-4 h-4" />
@@ -132,6 +137,11 @@ export default function InteractiveRadarHero() {
           <Link href="/missing" className="w-full">
             <button className="w-full px-6 py-4 bg-transparent border border-white/20 hover:bg-white/5 text-white font-bold tracking-[0.1em] text-[10px] sm:text-xs rounded-full flex items-center justify-center gap-2 transition-colors">
               <UserPlus className="w-4 h-4 text-blue-500" /> REPORT MISSING
+            </button>
+          </Link>
+          <Link href="/safe" className="w-full">
+            <button className="w-full px-6 py-4 bg-emerald-900/10 border border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400 font-bold tracking-[0.1em] text-[10px] sm:text-xs rounded-full flex items-center justify-center gap-2 transition-colors">
+              <ShieldCheck className="w-4 h-4" /> MARK AS SAFE
             </button>
           </Link>
         </div>
@@ -165,9 +175,18 @@ export default function InteractiveRadarHero() {
             PralayDrishti uses AI to transform thousands of unstructured emergency reports into prioritized, actionable incidents.
           </p>
 
-          <div className="flex items-center gap-4 w-auto flex-wrap">
+          <div className="grid grid-cols-2 gap-4 w-full max-w-[480px]">
+            <Link href="/camps">
+              <button className="w-full group relative px-4 py-4 bg-blue-900/40 border border-blue-500/50 hover:bg-blue-600/40 text-blue-400 hover:text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <Tent className="w-4 h-4" />
+                  FIND RELIEF CAMPS
+                </span>
+              </button>
+            </Link>
+            
             <Link href="/report">
-              <button className="group relative px-8 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:shadow-[0_0_60px_rgba(16,185,129,0.5)]">
+              <button className="w-full group relative px-4 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:shadow-[0_0_60px_rgba(16,185,129,0.5)]">
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   SUBMIT SOS
                   <Activity className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -177,10 +196,19 @@ export default function InteractiveRadarHero() {
             </Link>
 
             <Link href="/missing">
-              <button className="group relative px-8 py-4 bg-black border border-white/20 hover:border-white/50 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all shadow-[0_0_30px_rgba(255,255,255,0.05)]">
+              <button className="w-full group relative px-4 py-4 bg-black border border-white/20 hover:border-white/50 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all shadow-[0_0_30px_rgba(255,255,255,0.05)]">
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   <UserPlus className="w-4 h-4 text-blue-500 group-hover:text-blue-400 transition-colors" />
                   REPORT MISSING
+                </span>
+              </button>
+            </Link>
+
+            <Link href="/safe">
+              <button className="w-full group relative px-4 py-4 bg-emerald-900/20 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all shadow-[0_0_20px_rgba(16,185,129,0.05)]">
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  MARK AS SAFE
                 </span>
               </button>
             </Link>

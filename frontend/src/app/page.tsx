@@ -29,26 +29,26 @@ const HowItWorksSection = () => {
           <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-red-500/20 group-hover:border-red-500/50 transition-colors">
             <span className="text-xl font-black text-white group-hover:text-red-500">1</span>
           </div>
-          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">1-Click SOS Submission</h4>
+          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">SOS & Grid Reduction</h4>
           <p className="text-sm text-slate-400 leading-relaxed mb-6">
-            Civilians use the ultra-low bandwidth SOS portal to report their emergency. They can use English, Hindi, or Hinglish voice commands, and the system auto-locks their GPS.
+            Civilians report emergencies using multilingual voice SOS, or explicitly "Mark as Safe" to mathematically shrink the active search grid for NDRF commanders in real-time.
           </p>
           <div className="pt-4 border-t border-white/10">
-            <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Multi-lingual NLP Engine</span>
+            <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Smart Grid Check-In</span>
           </div>
         </div>
 
         {/* Step 2 */}
-        <div className="glass-panel p-8 rounded-3xl border border-white/5 hover:border-orange-500/30 transition-all group">
-          <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-orange-500/20 group-hover:border-orange-500/50 transition-colors">
-            <span className="text-xl font-black text-white group-hover:text-orange-500">2</span>
+        <div className="glass-panel p-8 rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all group">
+          <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-blue-500/20 group-hover:border-blue-500/50 transition-colors">
+            <span className="text-xl font-black text-white group-hover:text-blue-500">2</span>
           </div>
-          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">AI Triage & Clustering</h4>
+          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">Infrastructure Routing</h4>
           <p className="text-sm text-slate-400 leading-relaxed mb-6">
-            Our AI instantly parses the unstructured report, deduplicates overlapping reports, and calculates a strict Time-To-Critical (TTC) survival window based on the hazard.
+            The system dynamically scans live relief camp capacities using reverse geocoding, and plots actual OSRM physical routes to safety, dynamically avoiding hazard zones.
           </p>
           <div className="pt-4 border-t border-white/10">
-            <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Automated Prioritization</span>
+            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">Live OSRM Navigation</span>
           </div>
         </div>
 
@@ -57,12 +57,12 @@ const HowItWorksSection = () => {
           <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
             <span className="text-xl font-black text-white group-hover:text-emerald-500">3</span>
           </div>
-          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">Command Dispatch</h4>
+          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">AI Vector Matching</h4>
           <p className="text-sm text-slate-400 leading-relaxed mb-6">
-            NDRF commanders view the live dashboard queue. The most critical incidents are flagged, allowing them to instantly dispatch drones and track live rescue telemetry.
+            A 384-dimensional AI embedding engine mathematically links separated family members by instantly cross-referencing public civilian registries with Control Room recovery logs.
           </p>
           <div className="pt-4 border-t border-white/10">
-            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Real-time Map UI</span>
+            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Semantic AI Linker</span>
           </div>
         </div>
 
@@ -421,11 +421,10 @@ export default function LandingPage() {
   }, []);
 
   const navLinks = [
-    { id: "top", label: "HOME" },
-    { id: "how-it-works", label: "HOW IT WORKS" },
-    { id: "intelligence", label: "INTELLIGENCE" },
-    { id: "impact", label: "IMPACT" },
-    { id: "about", label: "ABOUT" },
+    { id: "top", label: "HOME", href: "#top" },
+    { id: "how-it-works", label: "HOW IT WORKS", href: "#how-it-works" },
+    { id: "intelligence", label: "INTELLIGENCE", href: "#intelligence" },
+    { id: "impact", label: "IMPACT", href: "#impact" }
   ];
 
   return (
@@ -447,8 +446,8 @@ export default function LandingPage() {
           {navLinks.map((link) => (
             <Link 
               key={link.id} 
-              href={"#" + link.id} 
-              onClick={() => setActiveSection(link.id)}
+              href={link.href || ("#" + link.id)} 
+              onClick={() => link.href?.startsWith('#') && setActiveSection(link.id)}
               className={"relative text-[10px] font-bold tracking-widest uppercase transition-colors " + (activeSection === link.id ? "text-white" : "text-slate-400 hover:text-white")}
             >
               {link.label}
@@ -601,9 +600,10 @@ export default function LandingPage() {
               <ul className="space-y-4">
                 {
                 [
-                  { label: 'Control Room', href: '/dashboard' },
                   { label: 'Citizen Report UI', href: '/report' },
-                  { label: 'Ultra-Low Bandwidth', href: '/report.html' }
+                  { label: 'Live Relief Camps', href: '/camps' },
+                  { label: 'AI Missing Linker', href: '/missing' },
+                  { label: 'Grid Check-In', href: '/safe' }
                 ].map((item, i) => (
                   <motion.li key={i} whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link href={item.href} className="group text-xs text-slate-500 hover:text-white transition-colors uppercase tracking-wider font-bold flex items-center gap-2">
@@ -642,10 +642,19 @@ export default function LandingPage() {
               </h4>
               <ul className="space-y-4">
                 <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 300 }}>
-                  <a href="https://github.com/PralayDrishti" target="_blank" rel="noreferrer" className="text-xs text-slate-500 hover:text-white transition-colors uppercase tracking-wider font-bold">Open Source (GitHub)</a>
+                  <a href="https://github.com/Aditya6743/PralayDrishti" target="_blank" rel="noreferrer" className="text-xs text-slate-500 hover:text-white transition-colors uppercase tracking-wider font-bold flex items-center gap-2">
+                    <span className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">►</span> Open Source (GitHub)
+                  </a>
                 </motion.li>
                 <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 300 }}>
-                  <Link href="#" className="group text-xs text-slate-500 hover:text-white transition-colors uppercase tracking-wider font-bold">Privacy Policy</Link>
+                  <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noreferrer" className="text-xs text-slate-500 hover:text-white transition-colors uppercase tracking-wider font-bold flex items-center gap-2">
+                    <span className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">►</span> MIT License
+                  </a>
+                </motion.li>
+                <motion.li whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 300 }}>
+                  <Link href="/safe" className="group text-xs text-slate-500 hover:text-white transition-colors uppercase tracking-wider font-bold flex items-center gap-2">
+                    <span className="text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">►</span> Data Privacy
+                  </Link>
                 </motion.li>
               </ul>
             </div>
