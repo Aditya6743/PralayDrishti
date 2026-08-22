@@ -1,17 +1,27 @@
 #!/bin/bash
+trap "kill 0" EXIT
+
+echo "Cleaning up old processes..."
+lsof -ti:8000,8001,8002,3000 | xargs kill -9 2>/dev/null
+
 echo "Starting PralayDrishti System (Next.js + FastAPI)..."
 
-# Start Backend
-echo "Starting Backend API (Port 8000)..."
-cd backend
-source venv/bin/activate
-uvicorn app.main:app --reload --port 8000 &
+# Ensure venv exists in frontend/api
+cd frontend
+if [ ! -d ".venv" ]; then
+    echo "Creating Python virtual environment..."
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+else
+    source .venv/bin/activate
+fi
+
+echo "Starting Backend API (Port 8002)..."
+cd api
+uvicorn app.main:app --reload --port 8002 &
 BACKEND_PID=$!
 
-# Start Frontend
 echo "Starting Frontend App (Port 3000)..."
-cd ../frontend
+cd ..
 npm run dev
-
-# Cleanup on exit
-kill $BACKEND_PID

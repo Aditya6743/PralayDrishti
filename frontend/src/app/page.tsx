@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, ShieldAlert, Target, CheckCircle2, User, Mic, Layers, Activity } from "lucide-react";
+import { ArrowRight, ShieldAlert, Menu, X, Target, CheckCircle2, User, Mic, Layers, Activity } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import Radar from "@/components/ui/Radar";
 import Magnetic from "@/components/ui/Magnetic";
@@ -156,7 +156,7 @@ const SectionAIIntelligence = () => {
 // SECTION 4: INCIDENT CLUSTERING
 const SectionIncidentClustering = () => {
   return (
-    <div className="w-full min-h-screen py-32 px-4  text-center relative flex flex-col items-center justify-center bg-black/50">
+    <div className="w-full min-h-screen py-32 px-4  text-center relative flex flex-col items-center justify-center bg-transparent">
       <h2 className="text-4xl md:text-5xl font-bold text-white editorial-heading tracking-tight mb-4">18 voices. 1 clear incident.</h2>
       <p className="text-muted-foreground text-lg mb-20 max-w-2xl editorial-heading mx-auto">
         Cross-referencing spatial, temporal, and semantic data to merge duplicate panic into a single operational target.
@@ -243,7 +243,7 @@ const SectionHumanInTheLoop = () => {
 // SECTION 6: IMPACT
 const SectionImpact = () => {
   return (
-    <div id="impact" className="w-full min-h-screen flex flex-col justify-center py-40 px-4  bg-black relative">
+    <div id="impact" className="w-full min-h-screen flex flex-col justify-center py-40 px-4 bg-transparent relative">
       <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
         {[
           { num: "1,284", label: "Reports Analyzed" },
@@ -313,6 +313,7 @@ const SectionFinalCTA = () => {
 
 export default function LandingPage() {
   const [activeSection, setActiveSection] = useState("top");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Parallax Background Text with Premium Spring
   const { scrollYProgress } = useScroll();
@@ -390,17 +391,64 @@ export default function LandingPage() {
         </div>
 
         <div className="flex items-center gap-4">
+          <button 
+            className="lg:hidden p-2 text-slate-300 hover:text-white"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span className="text-[9px] font-bold tracking-widest uppercase text-slate-300">AI ENGINE ACTIVE</span>
           </div>
+          <Link href="/report">
+            <button className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-emerald-900/40 hover:bg-emerald-500 border border-emerald-500/50 text-white font-bold tracking-[0.1em] text-[10px] rounded-full transition-colors">
+              SUBMIT SOS
+            </button>
+          </Link>
           <Link href="/dashboard">
             <button className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-red-900/40 hover:bg-red-500 border border-red-500/50 text-white font-bold tracking-[0.1em] text-[10px] rounded-full transition-colors">
-              ENTER CONTROL ROOM <ArrowRight className="w-3 h-3" />
+              CONTROL ROOM <ArrowRight className="w-3 h-3" />
             </button>
           </Link>
         </div>
       </header>
+      
+      {/* Mobile Menu Panel */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-[72px] left-0 right-0 z-40 bg-black/95 backdrop-blur-3xl border-b border-white/10 p-6 flex flex-col gap-6 lg:hidden shadow-2xl"
+          >
+            <nav className="flex flex-col gap-4">
+              {navLinks.map((link) => (
+                <Link 
+                  key={link.id} 
+                  href={"#" + link.id} 
+                  onClick={() => { setActiveSection(link.id); setIsMobileMenuOpen(false); }}
+                  className={"text-xs font-bold tracking-widest uppercase transition-colors " + (activeSection === link.id ? "text-primary" : "text-slate-400")}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="h-px bg-white/10 w-full" />
+            <Link href="/report" onClick={() => setIsMobileMenuOpen(false)}>
+              <button className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-emerald-900/40 hover:bg-emerald-500 border border-emerald-500/50 text-white font-bold tracking-[0.1em] text-[10px] rounded-full transition-colors">
+                SUBMIT SOS REPORT
+              </button>
+            </Link>
+            <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+              <button className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-red-900/40 hover:bg-red-500 border border-red-500/50 text-white font-bold tracking-[0.1em] text-[10px] rounded-full transition-colors">
+                CONTROL ROOM <ArrowRight className="w-3 h-3" />
+              </button>
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div id="top">
         <InteractiveRadarHero />
@@ -423,7 +471,7 @@ export default function LandingPage() {
           {/* Giant Inner Target */}
           <motion.div 
             style={{ rotate: rotateTarget2, y: yOffset }}
-            className="absolute top-[30%] right-[-10%] w-[120vw] h-[120vw] md:w-[60vw] md:h-[60vw] opacity-[0.04] border-[4px] border-red-500 rounded-full flex items-center justify-center"
+            className="absolute top-[10%] md:top-[30%] -right-[50%] md:right-[-10%] w-[200vw] h-[200vw] md:w-[60vw] md:h-[60vw] opacity-[0.02] md:opacity-[0.04] border-[2px] md:border-[4px] border-red-500 rounded-full flex items-center justify-center pointer-events-none"
           >
             <div className="w-[80%] h-[80%] border-2 border-red-500/50 rounded-full border-dashed" />
             <div className="absolute w-4 h-4 bg-red-500 rounded-full top-[10%]" />

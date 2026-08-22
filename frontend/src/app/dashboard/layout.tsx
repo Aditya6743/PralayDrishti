@@ -27,27 +27,40 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     fetch("/api/notifications").then(r => r.json()).then(setNotifications).catch(console.error);
 
-    const wsUrl = (window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/api/ws/live';
-    const ws = new WebSocket(wsUrl);
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      if (msg.type === "NEW_NOTIFICATION") {
-        setNotifications(prev => [msg.data, ...prev]);
-        if (msg.data.type === "ALERT" || msg.data.type === "WARNING") {
-          setSurge(true);
-          setTimeout(() => setSurge(false), 2000);
-        }
-      } else if (msg.type === "RESET") {
-        window.location.reload();
-      }
+    const fetchNotifs = async () => {
+      try {
+        const res = await fetch("/api/notifications?t=" + Date.now());
+        const data = await res.json();
+        setNotifications(prev => {
+          if (data.length > prev.length && data.length > 0) {
+            const newNotif = data[0];
+            if (newNotif.type === "ALERT" || newNotif.type === "WARNING") {
+              setSurge(true);
+              setTimeout(() => setSurge(false), 2000);
+            }
+          }
+          return data;
+        });
+      } catch (e) {}
     };
-    return () => ws.close();
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const startDemo = async () => {
     setDemoMode(true);
     setSurge(true);
-    await fetch("/api/demo/start", { method: "POST" });
+    try {
+      const startRes = await fetch("/api/demo/start", { method: "POST" });
+      if (startRes.status === 500) {
+        console.warn("Auto-healing DB and retrying demo...");
+        await fetch("/api/demo/migrate");
+        await fetch("/api/demo/start", { method: "POST" });
+      }
+    } finally {
+      setDemoMode(false);
+    }
   };
 
   const resetDemo = async () => {

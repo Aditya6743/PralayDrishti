@@ -33,9 +33,22 @@ const HeatmapLayer = ({ incidents }: { incidents: Incident[] }) => {
         0.8: '#ea580c', // Orange
         1.0: '#dc2626'  // Red
       }
-    }).addTo(map);
+    });
+
+    // Safely add after map has dimensions to prevent Canvas height 0 error
+    const timer = setTimeout(() => {
+        map.invalidateSize(); // Always force update first
+        if (map.getSize().y > 0 && map.getSize().x > 0) {
+            try {
+                heat.addTo(map);
+            } catch (e) {
+                console.warn("Heatmap skipped due to canvas size 0");
+            }
+        }
+    }, 500);
     
     return () => {
+      clearTimeout(timer);
       map.removeLayer(heat);
     };
   }, [incidents, map]);

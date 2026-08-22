@@ -32,7 +32,7 @@ export function calculateTTC(hazard: HazardType, status: VictimStatus): { ttc_mi
   if (status.unconscious) multiplier *= 0.40;
   if (status.smoke) multiplier *= 0.50;
 
-  let ttc_minutes = Math.round(baseTTC * multiplier);
+  const ttc_minutes = Math.round(baseTTC * multiplier);
 
   let urgency_score = 100;
   if (status.infant_present) urgency_score += 20;
