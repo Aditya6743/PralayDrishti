@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 
 export default function PublicMissingPage() {
   const [missingDesc, setMissingDesc] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const reportMissing = (e: React.FormEvent) => {
@@ -46,6 +47,17 @@ export default function PublicMissingPage() {
 
         {!submitted ? (
           <form onSubmit={reportMissing} className="space-y-6">
+            <div>
+              <label className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Your Contact Number (For SMS Alerts)</label>
+              <input 
+                type="tel"
+                required 
+                value={contactPhone} 
+                onChange={e=>setContactPhone(e.target.value)} 
+                placeholder="+91-XXXX-XXXXXX" 
+                className="w-full bg-black/50 border border-white/10 p-4 rounded-xl text-white text-sm focus:outline-none focus:border-blue-500 mb-6 font-mono" 
+              />
+            </div>
             <div>
               <label className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Subject Description (Clothing, Age, Traits)</label>
               <textarea 
