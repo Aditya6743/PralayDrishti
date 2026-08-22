@@ -1,8 +1,8 @@
 import postgres from 'postgres';
 
-const DATABASE_URL = process.env.DATABASE_URL!;
+// Hardcoding the exact IPv4 Session Pooler URL to bypass Next.js .env caching issues
+const DATABASE_URL = "postgresql://postgres.feegfdvcfmzmgvwmziya:Elicit%23%232026@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres";
 
-// Parse the URL manually to ensure special characters like # in passwords don't break connection strings
 const parsed = new URL(DATABASE_URL);
 
 export const sql = postgres({
@@ -12,5 +12,5 @@ export const sql = postgres({
   username: decodeURIComponent(parsed.username),
   password: decodeURIComponent(parsed.password),
   ssl: 'require',
-  prepare: false // Required for Supabase Transaction Poolers (port 6543)
+  prepare: false
 });
