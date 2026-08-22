@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Play, ShieldAlert, Users, AlertTriangle, MapPin, Activity } from "lucide-react";
+import { ArrowRight, Play, ShieldAlert, Users, AlertTriangle, MapPin, Activity, UserPlus } from "lucide-react";
 import HeroRadar from "@/components/ui/HeroRadar";
 
 export default function InteractiveRadarHero() {
@@ -100,7 +100,7 @@ export default function InteractiveRadarHero() {
             PralayDrishti uses AI to transform thousands of unstructured emergency reports into prioritized, actionable incidents.
           </p>
 
-          <div className="flex items-center gap-4 w-auto">
+          <div className="flex items-center gap-4 w-auto flex-wrap">
             <Link href="/dashboard">
               <button className="group relative px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_40px_rgba(239,68,68,0.3)] hover:shadow-[0_0_60px_rgba(239,68,68,0.5)]">
                 <span className="relative z-10 flex items-center justify-center gap-2">
@@ -110,15 +110,15 @@ export default function InteractiveRadarHero() {
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
               </button>
             </Link>
-            
-            <a href="#intelligence">
-              <button className="group relative px-8 py-4 bg-transparent border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-bold tracking-[0.1em] text-xs rounded-full transition-all">
+
+            <Link href="/missing">
+              <button className="group relative px-8 py-4 bg-black border border-white/20 hover:border-white/50 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all shadow-[0_0_30px_rgba(255,255,255,0.05)]">
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  <Play className="w-4 h-4" />
-                  WATCH INTELLIGENCE
+                  <UserPlus className="w-4 h-4 text-blue-500 group-hover:text-blue-400 transition-colors" />
+                  REPORT MISSING
                 </span>
               </button>
-            </a>
+            </Link>
           </div>
         </motion.div>
 
