@@ -30,7 +30,7 @@ export default function InteractiveRadarHero() {
             const res = await fetch('/api/incidents');
             const data = await res.json();
             if (data && data.length > 0) {
-              const sorted = data.slice(0, 3).map((inc: any, i: number) => {
+              const sorted = data.slice(0, 3).map((inc: Record<string, unknown>, i: number) => {
                 let sev = 'Medium'; let col = '#eab308'; let bord = 'rgba(255,255,255,0.1)'; let icon = Users;
                 if (inc.severity === 'CRITICAL') { sev = 'Critical'; col = '#ef4444'; bord = 'rgba(239,68,68,0.3)'; icon = AlertTriangle; }
                 else if (inc.severity === 'HIGH') { sev = 'High'; col = '#f97316'; bord = 'rgba(249,115,22,0.3)'; icon = ShieldAlert; }
@@ -54,7 +54,7 @@ export default function InteractiveRadarHero() {
             const incidentRes = await fetch('/api/incidents');
             const incData = await incidentRes.json();
             if (incData && incData.length > 0) {
-              const sorted = incData.slice(0, 3).map((inc: any, i: number) => {
+              const sorted = incData.slice(0, 3).map((inc: Record<string, unknown>, i: number) => {
                 let sev = 'Medium'; let col = '#eab308'; let bord = 'rgba(255,255,255,0.1)'; let icon = Users;
                 if (inc.severity === 'CRITICAL') { sev = 'Critical'; col = '#ef4444'; bord = 'rgba(239,68,68,0.3)'; icon = AlertTriangle; }
                 else if (inc.severity === 'HIGH') { sev = 'High'; col = '#f97316'; bord = 'rgba(249,115,22,0.3)'; icon = ShieldAlert; }

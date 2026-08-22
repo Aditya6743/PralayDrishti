@@ -22,7 +22,7 @@ export default function ReviewPage() {
     fetchQueue();
   }, []);
 
-  const fetchQueue = async () => {
+  async function fetchQueue() {
     try {
       const res = await fetch("/api/review");
       const data = await res.json().catch(() => null);
@@ -92,7 +92,7 @@ export default function ReviewPage() {
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase mb-3">Intercepted Signal</h3>
-                    <p className="text-2xl text-white font-medium leading-relaxed italic border-l-2 border-white/20 pl-4 py-1">"{report.message}"</p>
+                    <p className="text-2xl text-white font-medium leading-relaxed italic border-l-2 border-white/20 pl-4 py-1">&quot;{report.message}&quot;</p>
                   </div>
 
                   {/* Confidence Spectrum */}

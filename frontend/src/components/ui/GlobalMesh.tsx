@@ -14,6 +14,7 @@ export function GlobalMesh() {
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);

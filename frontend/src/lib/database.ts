@@ -12,7 +12,7 @@ export interface Ticket {
   created_at: number;
   ttc_minutes: number;
   priority: string;
-  victim_status: any;
+  victim_status: Record<string, unknown>;
   is_duplicate: boolean;
   phone?: string;
 }
@@ -20,7 +20,7 @@ export interface Ticket {
 class Store {
   tickets: Ticket[] = [];
 
-  addTicket(data: any) {
+  addTicket(data: Record<string, unknown>) {
     // Duplicate check: within 2 hours, 500 meters, matching phone or hazard
     const now = Date.now();
     const is_duplicate = this.tickets.some(t => {

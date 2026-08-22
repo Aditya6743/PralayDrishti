@@ -31,7 +31,7 @@ const HowItWorksSection = () => {
           </div>
           <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">SOS & Grid Reduction</h4>
           <p className="text-sm text-slate-400 leading-relaxed mb-6">
-            Civilians report emergencies using multilingual voice SOS, or explicitly "Mark as Safe" to mathematically shrink the active search grid for NDRF commanders in real-time.
+            Civilians report emergencies using multilingual voice SOS, or explicitly &quot;Mark as Safe&quot; to mathematically shrink the active search grid for NDRF commanders in real-time.
           </p>
           <div className="pt-4 border-t border-white/10">
             <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Smart Grid Check-In</span>
@@ -89,7 +89,7 @@ const SectionAIIntelligence = () => {
               <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-500">Live Transcript</span>
             </div>
             <p className="text-2xl text-white italic font-medium leading-relaxed group-hover:text-white/80 transition-colors">
-              "Hum second floor pe phas gaye hain. Paani stairs tak aa gaya hai. 5 log hain."
+              &quot;Hum second floor pe phas gaye hain. Paani stairs tak aa gaya hai. 5 log hain.&quot;
             </p>
           </div>
         </div>
@@ -214,7 +214,7 @@ const SectionHumanInTheLoop = () => {
             <span className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">AI Ambiguity Detected</span>
             <span className="text-xs font-bold text-purple-400 mono-number">54% CONFIDENCE</span>
           </div>
-          <p className="text-white italic text-lg mb-4 font-medium">"Old building ke paas paani bahut hai, shayad log phase hain."</p>
+          <p className="text-white italic text-lg mb-4 font-medium">&quot;Old building ke paas paani bahut hai, shayad log phase hain.&quot;</p>
         </div>
 
         <div className="h-12 w-px bg-gradient-to-b from-white/20 to-purple-500/50"></div>
@@ -668,7 +668,7 @@ export default function LandingPage() {
                 animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 2 }}
                 className="hidden md:inline text-red-500/50"
               >
-                // FOR EMERGENCY OPERATIONS ONLY
+                {`// FOR EMERGENCY OPERATIONS ONLY`}
               </motion.span>
             </div>
             

@@ -21,7 +21,7 @@ const HeatmapLayer = ({ incidents }: { incidents: Incident[] }) => {
         return [Number(i.latitude), Number(i.longitude), intensity];
       });
       
-    // @ts-ignore
+    // @ts-expect-error leaflet plugin missing types
     const heat = L.heatLayer(points, {
       radius: 80,
       blur: 60,
@@ -269,7 +269,7 @@ export default function MapComponent({
             eventHandlers={{
               click: () => onMarkerClick(incident.ticket_id || incident.id)
             }}
-            // @ts-ignore
+            // @ts-expect-error leaflet plugin missing types
             opacity={opacity}
           />
         );

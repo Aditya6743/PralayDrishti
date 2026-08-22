@@ -19,6 +19,7 @@ export const MagneticCursor = () => {
   useEffect(() => {
     // Check if it's a touch device
     if (window.matchMedia("(pointer: coarse)").matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsTouchDevice(true);
       return;
     }

@@ -60,7 +60,7 @@ export default function MissingPersonsPage() {
     setTimeout(() => setScanStep(3), 2500);
     setTimeout(() => {
       // HACKATHON DEMO: Force a semantic match with the most recent public registry item
-      let bestMatch = missingDB[0];
+      const bestMatch = missingDB[0];
       
       // Calculate a realistic looking confidence score between 88% and 98%
       const finalScore = 88.4 + (Math.random() * 10);

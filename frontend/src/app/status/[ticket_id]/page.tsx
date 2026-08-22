@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 export default function StatusPage() {
   const { ticket_id } = useParams();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

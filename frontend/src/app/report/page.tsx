@@ -32,7 +32,7 @@ export default function ReportPortal() {
 
   const [locationStatus, setLocationStatus] = useState('Idle');
   const [submitting, setSubmitting] = useState(false);
-  const [ticket, setTicket] = useState<any>(null);
+  const [ticket, setTicket] = useState<Record<string, unknown> | null>(null);
 
   const triggerHaptic = () => {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -42,7 +42,7 @@ export default function ReportPortal() {
 
   const startVoiceCommand = () => {
     triggerHaptic();
-    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRec = (window as unknown as Record<string, unknown>).SpeechRecognition || (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
     if (!SpeechRec) {
       alert("Voice command is not supported on this browser.");
       return;
@@ -54,12 +54,12 @@ export default function ReportPortal() {
       setIsListening(true);
       setSpokenText("");
     };
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: Event & { results: SpeechRecognitionResultList }) => {
       const original = event.results[0][0].transcript;
       const transcript = original.toLowerCase();
       setSpokenText(original);
       
-      let updatedData = { ...formData };
+      const updatedData = { ...formData };
       
       // Multilingual Hazard Parsing (English, Hinglish, Devanagari)
       if (transcript.match(/flood|water|pani|paani|badh|baadh|बाढ़|पानी/)) updatedData.hazard = 'FLOOD';
@@ -185,10 +185,10 @@ export default function ReportPortal() {
                 {spokenText ? (
                   <div className="mt-3 p-3 bg-black/40 border border-white/10 rounded-xl">
                     <div className="text-[10px] text-primary uppercase font-bold tracking-widest mb-1">AI Transcribed:</div>
-                    <div className="text-sm text-white italic">"{spokenText}"</div>
+                    <div className="text-sm text-white italic">&quot;{spokenText}&quot;</div>
                   </div>
                 ) : (
-                  <div className="text-center text-[10px] text-slate-400 mt-2">Example: "There is a fire and 2 people are trapped"</div>
+                  <div className="text-center text-[10px] text-slate-400 mt-2">Example: &quot;There is a fire and 2 people are trapped&quot;</div>
                 )}
               </div>
 
