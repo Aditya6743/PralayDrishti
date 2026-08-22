@@ -25,12 +25,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [surge, setSurge] = useState(false);
 
   useEffect(() => {
-    fetch("/api/notifications").then(r => r.json()).then(setNotifications).catch(console.error);
+    fetch("/api/notifications").then(r => r.ok ? r.json() : []).then(setNotifications).catch(console.error);
 
     const fetchNotifs = async () => {
       try {
         const res = await fetch("/api/notifications?t=" + Date.now());
-        const data = await res.json();
+        const data = await res.json().catch(() => []);
         setNotifications(prev => {
           if (data.length > prev.length && data.length > 0) {
             const newNotif = data[0];
@@ -73,12 +73,77 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setIsSearching(true);
     try {
       const res = await fetch(`/api/search?q=${searchQuery}`);
-      const data = await res.json();
+      const data = await res.json().catch(() => []);
       setSearchResults(data);
     } catch (e) {
       console.error(e);
     }
   };
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passcode, setPasscode] = useState("");
+  const [authError, setAuthError] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passcode.toUpperCase() === "ELICIT26") {
+      setIsAuthenticated(true);
+    } else {
+      setAuthError(true);
+      setTimeout(() => setAuthError(false), 1000);
+      setPasscode("");
+      if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    }
+  };
+
+  if (!isClient) return null; // Prevent hydration mismatch
+
+  if (!isAuthenticated) {
+    return (
+      <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-6 z-[1000]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.02),_transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+        
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="relative z-10 w-full max-w-sm glass-panel p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center text-center"
+        >
+          <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mb-6">
+            <ShieldAlert className="w-8 h-8 text-red-500" />
+          </div>
+          
+          <h1 className="text-xl font-black text-white uppercase tracking-widest mb-1">Restricted Access</h1>
+          <p className="text-xs text-slate-400 font-mono mb-8">NDRF Command Protocol</p>
+
+          <form onSubmit={handleAuth} className="w-full">
+            <motion.div animate={authError ? { x: [-10, 10, -10, 10, 0] } : {}}>
+              <input
+                type="password"
+                placeholder="ENTER PASSCODE"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                className={`w-full bg-black/50 border ${authError ? 'border-red-500 text-red-500' : 'border-white/10 text-white focus:border-white/40'} rounded-xl p-4 text-center tracking-[0.5em] font-mono text-sm uppercase focus:outline-none transition-colors mb-4 placeholder:tracking-widest`}
+              />
+            </motion.div>
+            
+            <Button type="submit" className="w-full h-12 bg-white text-black hover:bg-slate-200 uppercase tracking-widest text-xs font-bold">
+              Decrypt & Authenticate
+            </Button>
+          </form>
+          
+          <div className="mt-8 text-[8px] text-slate-500 uppercase tracking-widest font-mono">
+            UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-1000 ${surge ? 'bg-red-950/20' : 'bg-transparent'}`}>

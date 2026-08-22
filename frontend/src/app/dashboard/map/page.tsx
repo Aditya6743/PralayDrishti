@@ -24,7 +24,7 @@ export default function MapPage() {
   useEffect(() => {
     const fetchIncidents = () => {
       fetch("/api/incidents")
-        .then(r => r.json())
+        .then(r => r.ok ? r.json() : [])
         .then(data => { if (Array.isArray(data)) setIncidents(data); })
         .catch(console.error);
     };
@@ -88,7 +88,7 @@ export default function MapPage() {
       </div>
 
       {/* RIGHT: PRIORITY QUEUE / INCIDENT DRAWER */}
-      <div className="absolute right-6 top-6 bottom-6 w-80 lg:w-96 z-10 flex flex-col gap-4 pointer-events-none">
+      <div className="absolute inset-x-4 bottom-4 top-auto md:top-6 md:bottom-6 md:right-6 md:left-auto md:w-80 lg:w-96 z-[500] flex flex-col gap-4 pointer-events-none">
         <AnimatePresence mode="wait">
           {!selectedIncidentId ? (
             <motion.div 
@@ -96,7 +96,7 @@ export default function MapPage() {
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 20, opacity: 0 }}
-              className="flex-1 glass-panel border border-white/10 rounded-3xl flex flex-col overflow-hidden pointer-events-auto"
+              className="hidden md:flex flex-1 glass-panel border border-white/10 rounded-3xl flex-col overflow-hidden pointer-events-auto"
             >
               <div className="p-5 border-b border-white/5 bg-black/40">
                 <h3 className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase flex items-center gap-2">
@@ -138,7 +138,7 @@ export default function MapPage() {
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 20, opacity: 0 }}
-              className="flex-1 glass-panel border border-white/10 rounded-3xl flex flex-col overflow-hidden pointer-events-auto shadow-2xl"
+              className="h-[50vh] md:h-auto md:flex-1 glass-panel border border-white/10 rounded-3xl flex flex-col overflow-hidden pointer-events-auto shadow-2xl"
             >
               {(() => {
                 const incident = incidents.find(i => i.id === selectedIncidentId);
@@ -195,7 +195,7 @@ export default function MapPage() {
                             onClick={async () => {
                               try {
                                 const res = await fetch(`/api/shelters/match?lat=${incident.latitude}&lon=${incident.longitude}&people=${incident.people_affected}`);
-                                const match = await res.json();
+                                const match = await res.json().catch(() => ({}));
                                 if (match.shelter_id) {
                                   alert(`✅ Matched with ${match.name} (${match.distance_km}km away). Seats remaining: ${match.available_capacity}`);
                                   await fetch(`/api/incidents/${incident.id}/status?status=RESPONDING`, { method: "PUT" });

@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Play, ShieldAlert, Users, AlertTriangle, MapPin, Activity } from "lucide-react";
-import Radar from "@/components/ui/Radar";
 import HeroRadar from "@/components/ui/HeroRadar";
-import Magnetic from "@/components/ui/Magnetic";
 
 export default function InteractiveRadarHero() {
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -20,24 +17,66 @@ export default function InteractiveRadarHero() {
   };
 
   return (
-    <div onMouseMove={handleMouseMove} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-transparent">
+    <div onMouseMove={handleMouseMove} className="relative w-full min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden bg-transparent">
       
       {/* --- Ambient Background --- */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Subtle topographic / radial glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.05)_0%,transparent_60%)]" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.03)_0%,transparent_60%)]" />
-        
-        {/* Interactive Mesh */}
         <motion.div 
           animate={{ x: mousePos.x * -60, y: mousePos.y * -60 }}
           transition={{ type: "spring", stiffness: 50, damping: 20 }}
-          className="absolute -inset-10 bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-40 [mask-image:radial-gradient(ellipse_100%_100%_at_50%_50%,#000_10%,transparent_100%)]" 
+          className="absolute -inset-10 bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-40 [mask-image:radial-gradient(ellipse_100%_100%_at_50%_50%,#000_10%,transparent_100%)] hidden lg:block" 
         />
         <div className="absolute inset-0 bg-noise opacity-[0.02] mix-blend-overlay" />
       </div>
 
-      <div className="max-w-[1400px] w-full mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-12 items-center pt-20">
+      {/* ========================================== */}
+      {/* 📱 MOBILE DEDICATED EXPERIENCE */}
+      {/* ========================================== */}
+      <div className="flex lg:hidden flex-col items-center justify-start w-full px-6 pt-32 pb-20 relative z-10 text-center">
+        <div className="mb-6 flex items-center justify-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+          <span className="text-[9px] font-bold tracking-[0.2em] text-slate-400 uppercase">Real-Time Intel</span>
+        </div>
+
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white mb-4 leading-tight editorial-heading">
+          See the crisis.<br/>
+          Understand signal.<br/>
+          <span className="text-red-500 drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]">Prioritize.</span>
+        </h1>
+
+        <p className="text-xs sm:text-sm text-slate-400 mb-10 font-medium max-w-xs leading-relaxed">
+          AI transforms thousands of civilian SOS reports into actionable rescue deployments.
+        </p>
+
+        {/* Scaled Mobile Radar */}
+        <div className="relative w-full h-[300px] mb-10 flex items-center justify-center overflow-visible pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] scale-[0.4] sm:scale-50 origin-center flex items-center justify-center">
+            <HeroRadar />
+          </div>
+        </div>
+
+        {/* Mobile Buttons */}
+        <div className="flex flex-col gap-4 w-full max-w-sm">
+          <Link href="/dashboard" className="w-full">
+            <button className="w-full px-6 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold tracking-[0.1em] text-[10px] sm:text-xs rounded-full shadow-[0_0_30px_rgba(239,68,68,0.4)] flex items-center justify-center gap-2">
+              ENTER CONTROL ROOM <ArrowRight className="w-4 h-4" />
+            </button>
+          </Link>
+          <a href="#intelligence" className="w-full">
+            <button className="w-full px-6 py-4 bg-transparent border border-white/20 hover:bg-white/5 text-white font-bold tracking-[0.1em] text-[10px] sm:text-xs rounded-full flex items-center justify-center gap-2 transition-colors">
+              <Play className="w-4 h-4" /> WATCH INTELLIGENCE
+            </button>
+          </a>
+        </div>
+      </div>
+
+
+      {/* ========================================== */}
+      {/* 💻 DESKTOP DEDICATED EXPERIENCE */}
+      {/* ========================================== */}
+      <div className="max-w-[1400px] w-full mx-auto px-6 relative z-10 hidden lg:grid lg:grid-cols-2 gap-12 items-center pt-20">
         
         {/* --- LEFT: Typography & CTAs --- */}
         <motion.div 
@@ -46,30 +85,24 @@ export default function InteractiveRadarHero() {
           transition={{ duration: 1, ease: "easeOut" }}
           className="flex flex-col items-start text-left max-w-2xl"
         >
-          {/* Top Label */}
           <div className="mb-6 flex items-center gap-3">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
-            <span className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">
-              Real-Time Disaster Intelligence
-            </span>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">Real-Time Disaster Intelligence</span>
           </div>
 
-          {/* Headline */}
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1] editorial-heading">
             See the crisis.<br/>
             Understand the signal.<br/>
             <span className="text-red-500 drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]">Prioritize the response.</span>
           </h1>
 
-          {/* Subtitle */}
           <p className="text-sm md:text-base text-slate-400 mb-10 font-medium tracking-wide max-w-lg leading-relaxed">
             PralayDrishti uses AI to transform thousands of unstructured emergency reports into prioritized, actionable incidents.
           </p>
 
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            <Link href="/dashboard" className="w-full sm:w-auto">
-              <button className="group relative w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_40px_rgba(239,68,68,0.3)] hover:shadow-[0_0_60px_rgba(239,68,68,0.5)]">
+          <div className="flex items-center gap-4 w-auto">
+            <Link href="/dashboard">
+              <button className="group relative px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold tracking-[0.1em] text-xs rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_0_40px_rgba(239,68,68,0.3)] hover:shadow-[0_0_60px_rgba(239,68,68,0.5)]">
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   ENTER CONTROL ROOM
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -78,46 +111,29 @@ export default function InteractiveRadarHero() {
               </button>
             </Link>
             
-            <button className="group relative w-full sm:w-auto px-8 py-4 bg-transparent border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-bold tracking-[0.1em] text-xs rounded-full transition-all">
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                <Play className="w-4 h-4" />
-                WATCH INTELLIGENCE
-              </span>
-            </button>
-          </div>
-
-          {/* Bottom Tags */}
-          <div className="mt-16 flex flex-wrap items-center gap-6 text-[9px] font-bold tracking-[0.15em] text-slate-500 uppercase">
-            <span className="flex items-center gap-1.5"><Activity className="w-3 h-3" /> AI TRIAGE</span>
-            <span className="flex items-center gap-1.5"><Activity className="w-3 h-3" /> REAL-TIME</span>
-            <span className="flex items-center gap-1.5"><Activity className="w-3 h-3" /> HUMAN-IN-THE-LOOP</span>
+            <a href="#intelligence">
+              <button className="group relative px-8 py-4 bg-transparent border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-bold tracking-[0.1em] text-xs rounded-full transition-all">
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <Play className="w-4 h-4" />
+                  WATCH INTELLIGENCE
+                </span>
+              </button>
+            </a>
           </div>
         </motion.div>
-
 
         {/* --- RIGHT: The Visualization Data Graph --- */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
-          className="relative w-full h-[500px] md:h-[600px] flex items-center justify-center lg:justify-end"
+          className="relative w-full h-[600px] flex items-center justify-end"
         >
-          
-          
-
-          
-          
-          {/* Central AI Node with Premium HTML/CSS Radar */}
-          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center pointer-events-none w-[800px] h-[800px]">
+          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center pointer-events-none w-[800px] h-[800px] overflow-hidden">
             <HeroRadar />
           </div>
 
-
-
-
-          {/* SVG Connection Lines */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden sm:block">
-            {/* Lines from left to center (Incoming reports) */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
             {Array.from({length: 12}).map((_, i) => {
               const startY = 100 + i * 35;
               return (
@@ -130,38 +146,23 @@ export default function InteractiveRadarHero() {
                 />
               )
             })}
-            
-            {/* Lines from center to right cards (Extracted Incidents) */}
             <path d="M 33% 300 C 50% 300, 60% 120, 100% 120" stroke="rgba(239,68,68,0.2)" strokeWidth="1.5" fill="none" strokeDasharray="4,4" className="animate-[pulse_2s_infinite]" />
             <path d="M 33% 300 C 50% 300, 60% 300, 100% 300" stroke="rgba(249,115,22,0.2)" strokeWidth="1.5" fill="none" strokeDasharray="4,4" />
             <path d="M 33% 300 C 50% 300, 60% 480, 100% 480" stroke="rgba(234,179,8,0.2)" strokeWidth="1.5" fill="none" strokeDasharray="4,4" />
           </svg>
 
-          {/* Incoming Particles (Left side) */}
-          <div className="absolute inset-0 z-10 overflow-hidden hidden sm:block [mask-image:linear-gradient(to_right,white_20%,transparent_40%)]">
+          <div className="absolute inset-0 z-10 overflow-hidden [mask-image:linear-gradient(to_right,white_20%,transparent_40%)]">
             {Array.from({length: 30}).map((_, i) => (
               <motion.div
                 key={`particle-${i}`}
                 initial={{ x: -50, y: Math.round((Math.sin(i * 100) * 0.5 + 0.5) * 600), opacity: 0 }}
-                animate={{ 
-                  x: 300,
-                  y: 300,
-                  opacity: [0, 1, 0],
-                }}
-                transition={{
-                  duration: Number((2 + (Math.cos(i * 200) * 0.5 + 0.5) * 2).toFixed(2)),
-                  repeat: Infinity,
-                  delay: Number(((Math.sin(i * 300) * 0.5 + 0.5) * 3).toFixed(2)),
-                  ease: "circIn"
-                }}
+                animate={{ x: 300, y: 300, opacity: [0, 1, 0] }}
+                transition={{ duration: Number((2 + (Math.cos(i * 200) * 0.5 + 0.5) * 2).toFixed(2)), repeat: Infinity, delay: Number(((Math.sin(i * 300) * 0.5 + 0.5) * 3).toFixed(2)), ease: "circIn" }}
                 className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,1)]"
               />
             ))}
           </div>
 
-          
-
-          {/* Stats Bar (Bottom center) */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -169,12 +170,12 @@ export default function InteractiveRadarHero() {
             className="absolute bottom-4 left-1/3 -translate-x-1/2 z-30 flex items-center gap-6 glass-panel px-6 py-4 rounded-2xl border border-white/5 bg-black/80 backdrop-blur-md"
           >
             <div>
-              <div className="text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-1">Reports Analyzed</div>
+              <div className="text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-1">Analyzed</div>
               <div className="text-2xl font-black text-white mono-number">1,284</div>
             </div>
             <div className="w-px h-8 bg-white/10" />
             <div>
-              <div className="text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-1">Active Incidents</div>
+              <div className="text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-1">Active</div>
               <div className="text-2xl font-black text-orange-400 mono-number">24</div>
             </div>
             <div className="w-px h-8 bg-white/10" />
@@ -183,13 +184,11 @@ export default function InteractiveRadarHero() {
               <div className="text-2xl font-black text-red-500 mono-number">7</div>
             </div>
           </motion.div>
-
         </motion.div>
-
       </div>
 
-      {/* Right Navbar Expanding Incident Cards */}
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-[999] group/nav py-12 pl-12">
+      {/* Right Navbar Expanding Incident Cards (DESKTOP ONLY) */}
+      <div className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 flex-col gap-4 z-[999] group/nav py-12 pl-12">
         {[
           { severity: 'Critical', confidence: 96, title: '5 People Trapped', loc: 'Sector 12, New Delhi', Icon: AlertTriangle, color: '#ef4444', border: 'rgba(239,68,68,0.3)', bg: 'rgba(239,68,68,0.05)', delay: 0.8 },
           { severity: 'High', confidence: 89, title: 'Flooding Reported', loc: 'Sector 14, New Delhi', Icon: ShieldAlert, color: '#f97316', border: 'rgba(249,115,22,0.3)', bg: 'rgba(0,0,0,0.6)', delay: 1.0 },
@@ -199,7 +198,6 @@ export default function InteractiveRadarHero() {
             key={i}
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            
             transition={{ delay: card.delay, type: 'spring', stiffness: 200, damping: 25 }}
             className="w-[64px] group-hover/nav:w-[320px] transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] p-3 rounded-l-2xl rounded-r-none border-y border-l backdrop-blur-2xl relative overflow-hidden group cursor-pointer flex items-center h-[90px] shadow-2xl"
             style={{ borderColor: card.border, backgroundColor: card.bg }}

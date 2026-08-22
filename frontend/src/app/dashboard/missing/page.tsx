@@ -25,7 +25,7 @@ export default function MissingPersonsPage() {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ description: foundDesc, location: "Camp A" })
     });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (data.status === "match_found") setMatchResult(data);
     else alert("Logged, no match yet.");
   };

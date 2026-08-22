@@ -19,7 +19,7 @@ export default function LiteReport() {
     
     try {
       const res = await fetch(`/api/ingest?d=${b64}`);
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       setTicket(data.ticket);
       setStatus("success");
     } catch {

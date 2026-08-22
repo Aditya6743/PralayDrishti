@@ -9,68 +9,63 @@ import Magnetic from "@/components/ui/Magnetic";
 import InteractiveRadarHero from "@/components/ui/InteractiveRadarHero";
 
 // SECTION 2: THE PROBLEM
-const SectionTheProblem = () => {
-  const reports = [
-    "5 people trapped...", "Road blocked...", "Paani ghar mein aa gaya...",
-    "Need medical help...", "Bridge damaged...", "Family stranded...",
-    "Power lines down...", "Water level rising fast...", "Cannot exit building..."
-  ];
-
+const HowItWorksSection = () => {
   return (
-    <div id="how-it-works" className="w-full min-h-screen py-32 px-4  relative flex flex-col items-center justify-center overflow-hidden">
-      <div className="text-center mb-24 relative z-10">
-        <h2 className="text-3xl md:text-6xl font-light text-white editorial-heading tracking-wide max-w-4xl leading-tight">
-          In a disaster, information isn’t scarce. <br/>
-          <span className="text-primary font-bold">Attention is.</span>
-        </h2>
+    <div id="how-it-works" className="w-full min-h-screen py-32 px-4 relative flex flex-col items-center justify-center overflow-hidden">
+      <div className="text-center mb-20 relative z-10 max-w-3xl mx-auto">
+        <h2 className="text-sm font-bold tracking-[0.3em] text-primary uppercase mb-4">Operational Protocol</h2>
+        <h3 className="text-3xl md:text-5xl font-light text-white editorial-heading tracking-wide leading-tight">
+          How PralayDrishti <span className="font-bold text-white">Works</span>
+        </h3>
+        <p className="text-slate-400 mt-6 text-sm md:text-base leading-relaxed">
+          The system connects stranded civilians directly to NDRF command centers, utilizing AI to cut through the noise and prioritize the most critical incidents instantly.
+        </p>
       </div>
 
-      <div className="w-full max-w-6xl mx-auto h-[400px] relative flex items-center justify-center">
-        {/* Chaos */}
-        <div className="absolute inset-0">
-          {reports.map((text, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.5 , filter: 'blur(10px)' }}
-              whileInView={{ 
-                opacity: [0, 0.4, 0], 
-                scale: [0.8, 1, 0.8],
-                x: Math.round((Math.sin(i * 123) * 0.5) * 400),
-                y: Math.round((Math.cos(i * 456) * 0.5) * 400)
-              }}
-              viewport={{ once: false, margin: "-100px" }}
-              transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
-              className="absolute left-1/2 top-1/2 -ml-20 -mt-4 text-[10px] text-muted-foreground bg-white/5 border border-white/10 px-3 py-1.5 rounded-full whitespace-nowrap backdrop-blur-sm"
-            >
-              {text}
-            </motion.div>
-          ))}
+      <div className="w-full max-w-6xl mx-auto grid md:grid-cols-3 gap-8 relative z-10">
+        
+        {/* Step 1 */}
+        <div className="glass-panel p-8 rounded-3xl border border-white/5 hover:border-red-500/30 transition-all group">
+          <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-red-500/20 group-hover:border-red-500/50 transition-colors">
+            <span className="text-xl font-black text-white group-hover:text-red-500">1</span>
+          </div>
+          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">1-Click SOS Submission</h4>
+          <p className="text-sm text-slate-400 leading-relaxed mb-6">
+            Civilians use the ultra-low bandwidth SOS portal to report their emergency. They can use English, Hindi, or Hinglish voice commands, and the system auto-locks their GPS.
+          </p>
+          <div className="pt-4 border-t border-white/10">
+            <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Multi-lingual NLP Engine</span>
+          </div>
         </div>
 
-        {/* Clarity Centerpiece */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 , filter: 'blur(10px)' }}
-          whileInView={{ opacity: 1, scale: 1 , filter: 'blur(0px)' }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          viewport={{ once: false }}
-          className="relative z-10 glass-panel p-8 md:p-12 rounded-[2rem] border border-primary/30 shadow-[0_0_50px_rgba(239,68,68,0.15)] flex flex-col items-center text-center bg-black/80 backdrop-blur-xl"
-        >
-          <h3 className="text-sm font-bold tracking-widest text-primary uppercase mb-6">PralayDrishti finds the signal inside the noise.</h3>
-          <div className="flex gap-6 md:gap-12">
-            <div>
-              <div className="text-5xl font-black text-white mono-number">23</div>
-              <div className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mt-2">Incidents</div>
-            </div>
-            <div>
-              <div className="text-5xl font-black text-primary mono-number">7</div>
-              <div className="text-[10px] font-bold tracking-widest text-primary uppercase mt-2">Critical</div>
-            </div>
-            <div>
-              <div className="text-5xl font-black text-orange-400 mono-number">18</div>
-              <div className="text-[10px] font-bold tracking-widest text-orange-400 uppercase mt-2">High</div>
-            </div>
+        {/* Step 2 */}
+        <div className="glass-panel p-8 rounded-3xl border border-white/5 hover:border-orange-500/30 transition-all group">
+          <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-orange-500/20 group-hover:border-orange-500/50 transition-colors">
+            <span className="text-xl font-black text-white group-hover:text-orange-500">2</span>
           </div>
-        </motion.div>
+          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">AI Triage & Clustering</h4>
+          <p className="text-sm text-slate-400 leading-relaxed mb-6">
+            Our AI instantly parses the unstructured report, deduplicates overlapping reports, and calculates a strict Time-To-Critical (TTC) survival window based on the hazard.
+          </p>
+          <div className="pt-4 border-t border-white/10">
+            <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Automated Prioritization</span>
+          </div>
+        </div>
+
+        {/* Step 3 */}
+        <div className="glass-panel p-8 rounded-3xl border border-white/5 hover:border-emerald-500/30 transition-all group">
+          <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
+            <span className="text-xl font-black text-white group-hover:text-emerald-500">3</span>
+          </div>
+          <h4 className="text-lg font-bold text-white uppercase tracking-wider mb-3">Command Dispatch</h4>
+          <p className="text-sm text-slate-400 leading-relaxed mb-6">
+            NDRF commanders view the live dashboard queue. The most critical incidents are flagged, allowing them to instantly dispatch drones and track live rescue telemetry.
+          </p>
+          <div className="pt-4 border-t border-white/10">
+            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Real-time Map UI</span>
+          </div>
+        </div>
+
       </div>
     </div>
   );
@@ -398,7 +393,7 @@ export default function LandingPage() {
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <div className="relative flex h-2 w-2 items-center justify-center"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span></div>
             <span className="text-[9px] font-bold tracking-widest uppercase text-slate-300">AI ENGINE ACTIVE</span>
           </div>
           <Link href="/report">
@@ -457,7 +452,7 @@ export default function LandingPage() {
       <div className="relative z-10 w-full bg-transparent">
       
 {/* Massive Scroll-Linked Geometric Background */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-[-1]">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-[-1] hidden lg:block">
           {/* Giant Outer Ring */}
           <motion.div 
             style={{ rotate: rotateTarget1, y: yOffset }}
@@ -486,7 +481,7 @@ export default function LandingPage() {
           />
         </div>
 
-        <SectionTheProblem />
+        <HowItWorksSection />
         <SectionAIIntelligence />
         <SectionIncidentClustering />
         <SectionHumanInTheLoop />

@@ -1,13 +1,15 @@
-
 "use client";
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertTriangle, MapPin, Users, Activity, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, MapPin, Users, Activity, CheckCircle2, Mic, RefreshCcw, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function ReportPortal() {
   const [step, setStep] = useState(1);
+  const [isListening, setIsListening] = useState(false);
+  const [spokenText, setSpokenText] = useState("");
   const [formData, setFormData] = useState({
     hazard: '',
     lat: 0,
@@ -28,6 +30,66 @@ export default function ReportPortal() {
   const [locationStatus, setLocationStatus] = useState('Idle');
   const [submitting, setSubmitting] = useState(false);
   const [ticket, setTicket] = useState<any>(null);
+
+  const triggerHaptic = () => {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate([50]);
+    }
+  };
+
+  const startVoiceCommand = () => {
+    triggerHaptic();
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRec) {
+      alert("Voice command is not supported on this browser.");
+      return;
+    }
+    const recognition = new SpeechRec();
+    recognition.lang = 'en-IN'; // Indian English handles Hinglish exceptionally well
+    
+    recognition.onstart = () => {
+      setIsListening(true);
+      setSpokenText("");
+    };
+    recognition.onresult = (event: any) => {
+      const original = event.results[0][0].transcript;
+      const transcript = original.toLowerCase();
+      setSpokenText(original);
+      
+      let updatedData = { ...formData };
+      
+      // Multilingual Hazard Parsing (English, Hinglish, Devanagari)
+      if (transcript.match(/flood|water|pani|paani|badh|baadh|बाढ़|पानी/)) updatedData.hazard = 'FLOOD';
+      else if (transcript.match(/fire|burn|aag|jal|आग|जल/)) updatedData.hazard = 'FIRE';
+      else if (transcript.match(/collapse|earthquake|bhukamp|gir|building|makaan|भूकंप|गिर|मकान/)) updatedData.hazard = 'COLLAPSE';
+      else if (transcript.match(/medical|hurt|bleeding|chot|khoon|bimar|doctor|hospital|चोट|खून|बीमार/)) updatedData.hazard = 'MEDICAL';
+      else if (transcript.match(/cyclone|storm|toofan|tufan|hava|hawai|तूफान/)) updatedData.hazard = 'CYCLONE';
+      
+      // Multilingual Trapped Parsing
+      if (transcript.match(/trapped|stuck|phans|fasa|fas|nikal|फंस|फँस/)) updatedData.victim_status.trapped = true;
+      
+      // Multilingual Headcount Parsing
+      if (transcript.match(/one|1|ek|akela|एक/)) updatedData.victim_status.headcount = 1;
+      if (transcript.match(/two|2|do|दो/)) updatedData.victim_status.headcount = 2;
+      if (transcript.match(/three|3|teen|तीन/)) updatedData.victim_status.headcount = 3;
+      if (transcript.match(/four|4|char|chaar|चार/)) updatedData.victim_status.headcount = 4;
+      if (transcript.match(/many|family|bahut|parivar|paanch|5|पांच|बहुत/)) updatedData.victim_status.headcount = 5;
+
+      setFormData(updatedData);
+      setIsListening(false);
+      
+      // Haptic confirmation
+      if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      
+      // Auto advance to step 2 if a hazard was identified
+      if (updatedData.hazard) {
+        setTimeout(() => setStep(2), 1500); // Give them 1.5s to read the spoken text
+      }
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+    recognition.start();
+  };
 
   const getGPS = () => {
     setLocationStatus('Locating...');
@@ -50,7 +112,7 @@ export default function ReportPortal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (data.success) {
         setTicket(data);
         setStep(4);
@@ -58,10 +120,19 @@ export default function ReportPortal() {
     } catch (e) {}
     setSubmitting(false);
   };
-
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative">
       
+      {/* Top Left Logo (Back to Home) */}
+      <Link href="/" className="absolute top-6 left-6 z-50 magnetic-target group">
+        <div className="flex flex-row items-center gap-3 w-max">
+          <ShieldAlert className="text-red-500 h-6 w-6 shrink-0" />
+          <span className="text-sm font-bold tracking-widest text-white editorial-heading uppercase whitespace-nowrap leading-none">
+            Pralay<span className="text-red-500">Drishti</span>
+          </span>
+        </div>
+      </Link>
+
       {/* Background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-900/20 via-background to-background z-0" />
       
@@ -79,7 +150,27 @@ export default function ReportPortal() {
           
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">1. Select Emergency Type</h2>
+              <div className="mb-6">
+                <Button 
+                  onClick={startVoiceCommand} 
+                  variant="outline" 
+                  className={`w-full h-14 uppercase tracking-widest text-xs font-bold transition-all ${isListening ? 'bg-red-500/20 border-red-500 text-red-500 animate-pulse' : 'border-white/20 text-white hover:bg-white/10'}`}
+                >
+                  <Mic className={`w-4 h-4 mr-2 ${isListening ? 'animate-bounce' : ''}`} /> 
+                  {isListening ? 'Listening... Speak Now' : 'Voice Command (Tap to Speak)'}
+                </Button>
+                
+                {spokenText ? (
+                  <div className="mt-3 p-3 bg-black/40 border border-white/10 rounded-xl">
+                    <div className="text-[10px] text-primary uppercase font-bold tracking-widest mb-1">AI Transcribed:</div>
+                    <div className="text-sm text-white italic">"{spokenText}"</div>
+                  </div>
+                ) : (
+                  <div className="text-center text-[10px] text-slate-400 mt-2">Example: "There is a fire and 2 people are trapped"</div>
+                )}
+              </div>
+
+              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Or Select Manually:</h2>
               <div className="grid grid-cols-2 gap-3">
                 {['FLOOD', 'FIRE', 'COLLAPSE', 'MEDICAL', 'CYCLONE', 'LANDSLIDE'].map(h => (
                   <button 
@@ -101,10 +192,25 @@ export default function ReportPortal() {
               <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">2. Location & Condition</h2>
               
               <div className="mb-6">
-                <Button onClick={getGPS} variant="outline" className="w-full h-14 border-white/20 text-white hover:bg-white/10 uppercase tracking-widest text-xs font-bold mb-2">
-                  <MapPin className="w-4 h-4 mr-2" /> Capture GPS Location
+                <Button onClick={getGPS} variant="outline" className={`w-full h-14 uppercase tracking-widest text-xs font-bold mb-2 transition-all ${formData.lat ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10' : 'border-white/20 text-white hover:bg-white/10'}`}>
+                  <MapPin className="w-4 h-4 mr-2" /> {formData.lat ? 'GPS LOCKED' : 'Capture GPS Location'}
                 </Button>
-                <div className="text-center text-[10px] text-slate-400 font-mono">{locationStatus}</div>
+                
+                {formData.lat ? (
+                  <div className="relative w-full h-32 rounded-xl border border-emerald-500/30 bg-black/60 overflow-hidden flex items-center justify-center mt-3">
+                    <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-emerald-500/20 rounded-full animate-ping" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 border border-emerald-500/40 rounded-full animate-pulse" />
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)] mb-2" />
+                      <div className="text-[10px] text-emerald-400 font-mono tracking-widest bg-black/80 px-2 py-1 rounded">
+                        {formData.lat.toFixed(4)}, {formData.lng.toFixed(4)}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center text-[10px] text-slate-400 font-mono mt-2">{locationStatus}</div>
+                )}
               </div>
 
               <div className="space-y-4">
@@ -172,11 +278,25 @@ export default function ReportPortal() {
                 </div>
               </div>
 
-              <a href={ticket.status_url} target="_blank" rel="noreferrer">
-                <Button className="w-full h-14 bg-white text-black hover:bg-slate-200 uppercase tracking-widest text-xs font-bold shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-                  Open Live Status Tracker
+              <div className="flex flex-col gap-3">
+                <a href={ticket.status_url} target="_blank" rel="noreferrer">
+                  <Button className="w-full h-14 bg-white text-black hover:bg-slate-200 uppercase tracking-widest text-xs font-bold shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                    Open Live Status Tracker
+                  </Button>
+                </a>
+                
+                <Button 
+                  onClick={() => {
+                    setStep(1);
+                    setFormData({ ...formData, hazard: '' });
+                    setTicket(null);
+                  }} 
+                  variant="outline" 
+                  className="w-full h-14 border-white/20 text-white hover:bg-white/10 uppercase tracking-widest text-xs font-bold"
+                >
+                  <RefreshCcw className="w-4 h-4 mr-2" /> File Another Report
                 </Button>
-              </a>
+              </div>
             </motion.div>
           )}
 

@@ -13,14 +13,14 @@ export default function StatusPage() {
 
   useEffect(() => {
     fetch(`/api/status/${ticket_id}`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : null)
       .then(d => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
       
     // Polling for updates
     const interval = setInterval(() => {
       fetch(`/api/status/${ticket_id}`)
-        .then(r => r.json())
+        .then(r => r.ok ? r.json() : null)
         .then(d => setData(d));
     }, 5000);
     return () => clearInterval(interval);

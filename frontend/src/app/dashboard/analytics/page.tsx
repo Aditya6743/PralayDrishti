@@ -10,7 +10,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     fetch("/api/analytics")
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : [])
       .then(setStats)
       .catch(console.error);
   }, []);

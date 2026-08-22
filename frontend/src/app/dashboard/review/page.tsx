@@ -25,7 +25,7 @@ export default function ReviewPage() {
   const fetchQueue = async () => {
     try {
       const res = await fetch("/api/review");
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
       if (Array.isArray(data)) {
         setQueue(data);
       }
