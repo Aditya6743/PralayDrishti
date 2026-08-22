@@ -15,50 +15,95 @@
 
 <br/>
 
-PralayDrishti is a comprehensive crisis management platform designed to operate in the most chaotic disaster scenarios. It takes unstructured, overwhelming SOS data and transforms it into prioritized, actionable operational clarity for rescue teams.
+## 🚨 The Problem
+During natural disasters (floods, earthquakes), emergency control rooms are overwhelmed with thousands of unstructured, frantic distress calls. Networks throttle, rescue teams deploy blindly without spatial context, and separated families have no centralized way to find each other. **Human guesswork in triage costs lives.**
+
+## 💡 The Solution
+**PralayDrishti** is a comprehensive crisis management platform built to survive when everything else fails. It ingests unstructured civilian SOS data, mathematically computes survival windows, and transforms the chaos into prioritized, actionable operational clarity for NDRF rescue forces.
+
+---
+
+## ✨ Key Features
+
+- **🎙️ Multilingual Voice SOS:** Civilians can report emergencies in Hindi, English, or Hinglish via an ultra-low bandwidth portal. The AI auto-transcribes and extracts the hazard.
+- **🗺️ Live Hazard Routing:** Maps dynamic OSRM offline routes to the nearest Relief Camps, algorithmically avoiding flooded or dangerous zones.
+- **🧠 384-D Semantic Linker:** An AI vector engine that mathematically links separated family members by cross-referencing civilian reports with NDRF recovery logs.
+- **📡 Twilio Dispatch Pipeline:** Instant mass SMS broadcasts to civilians and automated dispatch pings to field commanders via Twilio REST APIs.
+- **✅ Smart Grid Reduction:** A "Mark As Safe" feature that actively shrinks the rescue search space by removing safe civilians from the active operational grid.
+- **⏱️ Dynamic TTC Triage:** Calculates a rigid Time-To-Criticality (TTC) survival window based on the hazard, forcing commanders to focus on the highest-risk casualties first.
+
+---
+
+## 🏗️ System Architecture Pipeline
+
+The data flows from a stranded civilian through the AI engine and directly into the Commander's dashboard in milliseconds.
+
+```mermaid
+graph TD
+    %% Entities
+    C[Stranded Civilian] -->|Voice SOS / Form| F
+    S[Safe Civilian] -->|Mark As Safe| F
+    
+    %% Frontend
+    subgraph Frontend [Next.js Edge]
+        F[Citizen Portal]
+    end
+    
+    %% Processing
+    subgraph Backend [AI Engine & Processing]
+        NLP[Google Gemini NLP]
+        VEC[384-D Vector Engine]
+        GEO[OSRM Geo-Routing]
+    end
+    
+    %% Storage
+    subgraph Database [Supabase]
+        DB[(PostgreSQL + pgBouncer)]
+    end
+    
+    %% Output
+    subgraph Control Room [NDRF Dashboard]
+        Dash[Live Heatmap Triage]
+        SMS[Twilio SMS Gateway]
+    end
+    
+    %% Flow
+    F -->|Raw Text/Audio| NLP
+    F -->|GPS Ping| GEO
+    NLP -->|Structured JSON| DB
+    GEO -->|Safe Route Data| F
+    
+    DB -->|Real-time Sync| Dash
+    Dash -->|Match Missing Persons| VEC
+    VEC -->|High Confidence Match| SMS
+    SMS -->|Dispatch Alert| C
+```
+
+---
 
 ## 🚀 The Tech Stack
 
 ### Frontend & UI
 - **Next.js 16 (App Router):** Ultra-fast edge routing and API handling.
 - **React 19 & Tailwind CSS 4:** Responsive, glassmorphic UI architecture built for military-grade operational clarity.
-- **Leaflet & OSRM:** Real-time geospatial mapping, heatmaps, and hazard-aware offline routing.
+- **Leaflet & OSRM:** Real-time geospatial mapping and hazard-aware offline routing.
 
 ### Backend, Database & Comms
-- **Supabase (PostgreSQL):** Resilient database with custom pgBouncer session pooling configuration for high-volume disaster data.
+- **Supabase (PostgreSQL):** Resilient database with custom pgBouncer session pooling configuration to handle extreme concurrency.
 - **Twilio REST API:** Direct integration for real-time mass SMS broadcasts and rescue unit dispatch notifications.
-- **Python (FastAPI):** High-performance, asynchronous microservices.
 
 ### AI & Machine Learning
-- **Semantic Vector Linker:** A 384-dimensional embedding engine that mathematically cross-references civilian Missing Person registries with Control Room recovery logs.
-- **Google Gemini & NLP:** Core reasoning engine used to process chaotic audio SOS payloads into structured intelligence.
-- **Haversine Geo-Engine:** Algorithmic duplication protection based on spatial GPS radius mapping.
+- **Semantic Vector Linker:** Connects public registries to recovery logs bypassing exact keyword matching.
+- **Google Gemini:** Transforms frantic, unformatted text into structured JSON logic.
 
-## 🧠 How It Works
-
-PralayDrishti is built to survive when everything else fails. Here is the operational loop:
-
-### 1. SOS & Smart Grid Reduction
-Civilians report emergencies using multilingual voice SOS, or explicitly **"Mark as Safe"**. Checking in safely instantly pings the backend and mathematically shrinks the active search grid, dynamically reallocating NDRF rescue bandwidth to actual casualties.
-
-### 2. Live Infrastructure Routing
-When civilians need to find shelter, a standard map route might get them killed. Our system uses live **Reverse Geocoding** to map their city, cross-references live Relief Camp capacities, and computes a physical **OSRM offline route** to safety that algorithmically navigates *around* active hazard zones.
-
-### 3. AI Vector Matching & Dispatch
-A frantic family member files a missing person report with a vague description. A rescue worker later files a recovered person report with a different vague description. Our **384-dimensional AI Vector Engine** instantly links them with 98% confidence. The commander clicks *Notify Rescue Unit*, triggering the **Twilio SMS Pipeline** to physically buzz the family member's phone.
-
-### 4. Dynamic TTC Triage
-When the Control Room receives thousands of pings, human guesswork fails. Our engine mathematically computes survival windows based on hazard severity and environmental factors (e.g., trapped victims get a -40% survival penalty), instantly prioritizing who to save first on a live heat-map.
+---
 
 ## ⚙️ How to Run Locally
 
-You can spin up the entire architecture in seconds. 
-
 ### Prerequisites
 - Node.js (v18+)
-- Python (3.10+)
 - Twilio API Keys (Set in `.env.local`)
-- Supabase Project (Database URL required)
+- Supabase Project 
 
 ### 1. Boot the Application
 \`\`\`bash
