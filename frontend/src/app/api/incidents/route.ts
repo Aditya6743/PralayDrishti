@@ -6,7 +6,7 @@ export async function GET() {
     let incidents = [];
     try {
       incidents = await sql`SELECT * FROM incidents ORDER BY updated_at DESC LIMIT 100`;
-    } catch (dbError) {
+    } catch (dbError: any) {
       console.error("Supabase failed. Returning mock incidents for demo.");
       // Fallback Demo Data
       incidents = [
