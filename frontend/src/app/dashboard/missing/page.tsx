@@ -24,6 +24,7 @@ export default function MissingPersonsPage() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
   const [matchResult, setMatchResult] = useState<{ desc: string, score: number } | null>(null);
+  const [finderNotified, setFinderNotified] = useState(false);
 
   const reportFound = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +32,7 @@ export default function MissingPersonsPage() {
     
     setIsScanning(true);
     setMatchResult(null);
+    setFinderNotified(false);
     setScanStep(1);
 
     // Simulate AI Vector Embedding Process
@@ -177,6 +179,24 @@ export default function MissingPersonsPage() {
                     <span className="text-emerald-500">PAYLOAD:</span> "PralayDrishti Alert: High-confidence match found for your submitted missing person report. Please report to Relief Camp Alpha (Sector 12) for identification."<br/>
                     <span className="text-emerald-500">STATUS:</span> 200 OK - Message Delivered.
                   </div>
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-emerald-500/20">
+                  <button 
+                    onClick={() => setFinderNotified(true)}
+                    disabled={finderNotified}
+                    className={`w-full py-3 font-bold text-[10px] uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 ${
+                      finderNotified 
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                        : 'bg-black hover:bg-white/5 text-white border border-white/20'
+                    }`}
+                  >
+                    {finderNotified ? (
+                      <><CheckCircle2 className="w-4 h-4" /> Rescue Unit Notified to Standby</>
+                    ) : (
+                      <><Activity className="w-4 h-4" /> Notify Rescue Unit (Finder)</>
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
