@@ -1,42 +1,36 @@
-<div align="center">
-  <img src="assets/logo.png" alt="PralayDrishti Logo" width="500" />
-  <p><b>AI-Powered Disaster Intelligence & Dynamic Triage Engine</b></p>
-  
-  <p>
-    <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
-    <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React" />
-    <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS" />
-    <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
-    <img src="https://img.shields.io/badge/Twilio-F22F46?style=for-the-badge&logo=twilio&logoColor=white" alt="Twilio" />
-    <img src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python" />
-    <img src="https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Gemini" />
-  </p>
-</div>
+<p align="center">
+  <img src="docs/assets/logo.png" alt="PralayDrishti Logo" width="500" />
+</p>
 
-<br/>
+<p align="center">
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
+  <img alt="React" src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" />
+  <img alt="TailwindCSS" src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+  <img alt="Twilio" src="https://img.shields.io/badge/Twilio-F22F46?style=for-the-badge&logo=twilio&logoColor=white" />
+  <img alt="Python" src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" />
+  <img alt="Google Gemini" src="https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" />
+</p>
+
+# PralayDrishti 🚨
+
+> Turning unstructured disaster chaos into prioritized operational clarity.
+
+**PralayDrishti** is an AI-powered crisis management platform built to survive when everything else fails. It ingests unstructured civilian SOS data, mathematically computes survival windows, and transforms the chaos into actionable operational clarity for NDRF rescue forces.
+
+**Tags:** `Emergency Tech` · `Disaster Response` · `AI Triage` · `Hackathon` · `Next.js` · `Supabase` · `Twilio` · `Gemini AI`
+
+---
 
 ## 🚨 The Problem
 During natural disasters (floods, earthquakes), emergency control rooms are overwhelmed with thousands of unstructured, frantic distress calls. Networks throttle, rescue teams deploy blindly without spatial context, and separated families have no centralized way to find each other. **Human guesswork in triage costs lives.**
 
 ## 💡 The Solution
-**PralayDrishti** is a comprehensive crisis management platform built to survive when everything else fails. It ingests unstructured civilian SOS data, mathematically computes survival windows, and transforms the chaos into prioritized, actionable operational clarity for NDRF rescue forces.
+PralayDrishti eliminates guesswork. The system acts as a smart filter, prioritizing critical casualties based on a dynamically calculated **Time-To-Criticality (TTC)** score, mapping safe infrastructure routes for civilians, and semantically matching missing persons using AI.
 
 ---
 
-## ✨ Key Features
-
-- **🎙️ Multilingual Voice SOS:** Civilians can report emergencies in Hindi, English, or Hinglish via an ultra-low bandwidth portal. The AI auto-transcribes and extracts the hazard.
-- **🗺️ Live Hazard Routing:** Maps dynamic OSRM offline routes to the nearest Relief Camps, algorithmically avoiding flooded or dangerous zones.
-- **🧠 384-D Semantic Linker:** An AI vector engine that mathematically links separated family members by cross-referencing civilian reports with NDRF recovery logs.
-- **📡 Twilio Dispatch Pipeline:** Instant mass SMS broadcasts to civilians and automated dispatch pings to field commanders via Twilio REST APIs.
-- **✅ Smart Grid Reduction:** A "Mark As Safe" feature that actively shrinks the rescue search space by removing safe civilians from the active operational grid.
-- **⏱️ Dynamic TTC Triage:** Calculates a rigid Time-To-Criticality (TTC) survival window based on the hazard, forcing commanders to focus on the highest-risk casualties first.
-
----
-
-## 🏗️ System Architecture Pipeline
-
-The data flows from a stranded civilian through the AI engine and directly into the Commander's dashboard in milliseconds.
+## 🏗️ System Architecture & Data Flow
 
 ```mermaid
 graph TD
@@ -81,20 +75,35 @@ graph TD
 
 ---
 
-## 🚀 The Tech Stack
+## 📂 Repository Structure
 
-### Frontend & UI
-- **Next.js 16 (App Router):** Ultra-fast edge routing and API handling.
-- **React 19 & Tailwind CSS 4:** Responsive, glassmorphic UI architecture built for military-grade operational clarity.
-- **Leaflet & OSRM:** Real-time geospatial mapping and hazard-aware offline routing.
+```
+PralayDrishti/
+├── frontend/                 # Core Next.js Application
+│   ├── src/app/              # API Routes & Next 16 Pages
+│   ├── src/components/       # Reusable React UI Components
+│   └── src/lib/              # Database Drivers & Utilities
+├── backend/                  # Legacy Python FastAPI Services (Data Science/Seeding)
+│   ├── app/                  # Python endpoints & models
+│   └── api/                  # Core Python business logic
+├── docs/                     # Technical Documentation & Presentation Assets
+│   ├── FRONTEND_PRD.md       # Frontend Architecture Docs
+│   ├── BACKEND_PRD.md        # Backend Architecture Docs
+│   ├── presentations/        # PPTX files for judges
+│   └── assets/               # Image assets and logos
+└── scripts/                  # Diagnostic, DB fixing, and automation scripts
+```
 
-### Backend, Database & Comms
-- **Supabase (PostgreSQL):** Resilient database with custom pgBouncer session pooling configuration to handle extreme concurrency.
-- **Twilio REST API:** Direct integration for real-time mass SMS broadcasts and rescue unit dispatch notifications.
+---
 
-### AI & Machine Learning
-- **Semantic Vector Linker:** Connects public registries to recovery logs bypassing exact keyword matching.
-- **Google Gemini:** Transforms frantic, unformatted text into structured JSON logic.
+## ✨ Key Features
+
+- **🎙️ Multilingual Voice SOS:** Civilians report emergencies hands-free. AI auto-transcribes and extracts the hazard.
+- **🗺️ Live Hazard Routing:** Maps dynamic OSRM offline routes to nearest Relief Camps, algorithmically avoiding flooded zones.
+- **🧠 384-D Semantic Linker:** AI vector engine mathematically links separated family members by cross-referencing reports.
+- **📡 Twilio Dispatch Pipeline:** Instant mass SMS broadcasts and dispatch pings to field commanders via Twilio REST APIs.
+- **✅ Smart Grid Reduction:** Actively shrinks the rescue search space by removing safe civilians from the active operational grid.
+- **⏱️ Dynamic TTC Triage:** Calculates a rigid Time-To-Criticality survival window based on the hazard.
 
 ---
 
@@ -102,11 +111,11 @@ graph TD
 
 ### Prerequisites
 - Node.js (v18+)
-- Twilio API Keys (Set in `.env.local`)
+- Twilio API Keys (Set in `frontend/.env.local`)
 - Supabase Project 
 
 ### 1. Boot the Application
-\`\`\`bash
+```bash
 # Clone the repository
 git clone https://github.com/Aditya6743/PralayDrishti.git
 cd PralayDrishti/frontend
@@ -114,9 +123,10 @@ cd PralayDrishti/frontend
 # Install dependencies and start the Next.js server
 npm install
 npm run dev
-\`\`\`
+```
 
 ### 2. Access the Grid
 - 🌐 **Civilian Portal:** [http://localhost:3000](http://localhost:3000)
-- 🔒 **Command Center:** [http://localhost:3000/dashboard](http://localhost:3000/dashboard) (Passcode: ELICIT26)
+- 🔒 **Command Center:** [http://localhost:3000/dashboard](http://localhost:3000/dashboard) (Passcode: **ELICIT26**)
 - 🗺️ **Infrastructure Scanner:** [http://localhost:3000/camps](http://localhost:3000/camps)
+- ✅ **Mark As Safe:** [http://localhost:3000/safe](http://localhost:3000/safe)
