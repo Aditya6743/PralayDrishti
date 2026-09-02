@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, useMap, LayersControl, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap, LayersControl, Circle, LayerGroup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.heat";
 
