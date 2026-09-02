@@ -91,7 +91,8 @@ export default function MiniRouteMap({ lat, lng }: { lat: number, lng: number })
         dragging={true}
       >
         <MapResizer isExpanded={isExpanded} />
-        <TileLayer attribution="&copy; OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" className="filter invert contrast-[1.1] saturate-[0.8] brightness-[0.7] hue-rotate-[180deg]" />
+        <TileLayer attribution="&copy; Esri" url="https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" />
+        <TileLayer url="https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}" />
         
         {/* The Danger Zone explicitly placed off the natural path */}
         <Circle 

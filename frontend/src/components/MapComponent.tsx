@@ -223,11 +223,16 @@ export default function MapComponent({
         </LayersControl.BaseLayer>
         
         <LayersControl.BaseLayer checked name="Tactical Street (Dark)">
-          <TileLayer
-            attribution='&copy; OpenStreetMap'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            className="filter invert contrast-[1.1] saturate-[0.8] brightness-[0.7] hue-rotate-[180deg]"
-          />
+          <LayerGroup>
+            <TileLayer
+              attribution='&copy; Esri'
+              url="https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+            />
+            <TileLayer
+              attribution=''
+              url="https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+            />
+          </LayerGroup>
         </LayersControl.BaseLayer>
       </LayersControl>
       
