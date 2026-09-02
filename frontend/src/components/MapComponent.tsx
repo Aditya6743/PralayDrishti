@@ -217,15 +217,16 @@ export default function MapComponent({
 
                 <LayersControl.BaseLayer name="Real Map (Standard)">
           <TileLayer
-            attribution=''
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            attribution='&copy; OpenStreetMap'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
         </LayersControl.BaseLayer>
         
         <LayersControl.BaseLayer checked name="Tactical Street (Dark)">
           <TileLayer
-            attribution=''
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            attribution='&copy; OpenStreetMap'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            className="filter invert contrast-[1.1] saturate-[0.8] brightness-[0.7] hue-rotate-[180deg]"
           />
         </LayersControl.BaseLayer>
       </LayersControl>

@@ -91,7 +91,7 @@ export default function MiniRouteMap({ lat, lng }: { lat: number, lng: number })
         dragging={true}
       >
         <MapResizer isExpanded={isExpanded} />
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+        <TileLayer attribution="&copy; OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" className="filter invert contrast-[1.1] saturate-[0.8] brightness-[0.7] hue-rotate-[180deg]" />
         
         {/* The Danger Zone explicitly placed off the natural path */}
         <Circle 
