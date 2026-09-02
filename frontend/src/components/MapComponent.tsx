@@ -222,17 +222,12 @@ export default function MapComponent({
           />
         </LayersControl.BaseLayer>
         
-        <LayersControl.BaseLayer checked name="Tactical Street (Dark)">
-          <LayerGroup>
-            <TileLayer
-              attribution='&copy; Esri'
-              url="https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-            />
-            <TileLayer
-              attribution=''
-              url="https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
-            />
-          </LayerGroup>
+        <LayersControl.BaseLayer checked name="Advanced Tactical (Dark Terrain)">
+          <TileLayer
+            attribution='&copy; Google'
+            url="https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}"
+            className="filter invert contrast-[1.15] saturate-[0.6] brightness-[0.8] hue-rotate-[180deg]"
+          />
         </LayersControl.BaseLayer>
       </LayersControl>
       
